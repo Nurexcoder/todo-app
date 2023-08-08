@@ -23,7 +23,7 @@ const todoSlice = createSlice({
     },
     deleteTodo: (state, action) => {
       console.log(action.payload)
-      return state.todos.filter((todo) => todo.id !== action.payload);
+      return state.todos.todos.filter((todo) => todo.id !== action.payload);
     },
     editTodo: (state, action) => {
       console.log(action.payload)
