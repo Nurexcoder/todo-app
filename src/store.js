@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // You can choose different storage options
-
+import thunk from 'redux-thunk'
 import todoReducer from './sclices/todoSlice';
 
 const persistConfig = {
@@ -15,7 +15,9 @@ const persistedReducer = persistReducer(persistConfig, todoReducer);
 export const store = configureStore({
   reducer: {
     todos: persistedReducer,
+
   },
+  middleware:[thunk]
 });
 
 export const persistor = persistStore(store);

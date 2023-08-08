@@ -23,8 +23,8 @@ const TodoView = () => {
     const [activeKey, setActiveKey] = useState(null)
     const inputRef = useRef(null)
     const dispatch = useDispatch()
-    const todos = useSelector(state => state.todos.filterTodo.length ? state.todos.filterTodo : state.todos.todos)
-
+    const todos = useSelector(state => state.todos.filterTodo ? state.todos.filterTodo : state.todos.todos)
+    const notFound = useSelector(state => state.todos.notFound)
 
     const completedTaskes = todos.filter((item) => item.done)
 
@@ -146,15 +146,19 @@ const TodoView = () => {
                     </>}
                     activeKey={activeKey} onChange={(key) => setActiveKey(key.length ? key[0] : null)} />
 
-                <div className="w-full flex flex-col gap-5 min-h-[10rem] px-2">
-                    <h3 className='text-lg font-semibold'>Pending Tasks</h3>
-                    {pendingTaskes?.map((todo) =>
-                        <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
-                    )
-                    }
-                </div>
+                {!notFound ? <>
 
-                <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />
+                    <div className="w-full flex flex-col gap-5 min-h-[10rem] px-2">
+                        <h3 className='text-lg font-semibold'>Pending Tasks</h3>
+                        {pendingTaskes?.map((todo) =>
+                            <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
+                        )
+                        }
+                    </div>
+
+                    <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />
+                </> : <h3 className='text-lg font-semibold'>No Matching Todos</h3>}
+                
             </div>
 
         </div>

@@ -5,7 +5,9 @@ const todoSlice = createSlice({
   initialState: {
 
     todos: [],
-    filterTodo: []
+    filterTodo: null,
+    notFound: false
+
   }
   ,
   reducers: {
@@ -34,12 +36,21 @@ const todoSlice = createSlice({
           item.done = action.payload.done
       }
     },
-    searchTodo:(state,action)=>{
-      state.filterTodo=state.todos.includes(action.payload)
+    searchTodo: (state, action) => {
+      if (action.payload) {
+        state.filterTodo = state.todos.filter((item) => item.title.startsWith(action.payload) || item.description.startsWith(action.payload))
+        state.notFound = state.filterTodo.length === 0
+      }
+      else {
+        state.filterTodo = null
+        state.notFound = false
+      }
+
+
     }
 
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, editTodo,searchTodo } = todoSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, editTodo, searchTodo } = todoSlice.actions;
 export default todoSlice.reducer;
