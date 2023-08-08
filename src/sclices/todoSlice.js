@@ -2,13 +2,18 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const todoSlice = createSlice({
   name: 'todos',
-  initialState: [],
+  initialState: {
+
+    todos: [],
+    filterTodo: []
+  }
+  ,
   reducers: {
     addTodo: (state, action) => {
-      state.push(action.payload);
+      state.todos.push(action.payload);
     },
     toggleTodo: (state, action) => {
-      const todo = state.find((todo) => todo.id === action.payload);
+      const todo = state.todos.find((todo) => todo.id === action.payload);
       console.log(todo, action.payload)
       if (todo) {
         todo.done = !todo.done;
@@ -16,20 +21,25 @@ const todoSlice = createSlice({
     },
     deleteTodo: (state, action) => {
       console.log(action.payload)
-      return state.filter((todo) => todo.id !== action.payload);
+      return state.todos.filter((todo) => todo.id !== action.payload);
     },
     editTodo: (state, action) => {
       console.log(action.payload)
-      const item=state.find(todo => todo.id === action.payload.id)
-      if(item){
-        item.title=action.payload.title,
-        item.description=action.payload.description,
-        item.priority=action.payload.priority
+      const item = state.todos.find(todo => todo.id === action.payload.id)
+      if (item) {
+        item.title = action.payload.title,
+          item.description = action.payload.description,
+          item.priority = action.payload.priority,
+          item.dueDate = action.payload.dueDate,
+          item.done = action.payload.done
       }
+    },
+    searchTodo:(state,action)=>{
+      state.filterTodo=state.todos.includes(action.payload)
     }
 
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, editTodo } = todoSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, editTodo,searchTodo } = todoSlice.actions;
 export default todoSlice.reducer;

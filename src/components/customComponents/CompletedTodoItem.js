@@ -15,7 +15,7 @@ const CompletedTodoItem = ({ todo,dropdownItems }) => {
         <motion.div initial="hidden"
             animate="visible"
             variants={todoVariants} className="flex w-full p-2 items-start gap-x-2 gap-y-4 hover:shadow-md" key={todo.id}>
-            <Checkbox className='my-[2px]' onChange={() => dispatch(toggleTodo(todo.id))} />
+            <Checkbox checked className='my-[2px]' onChange={() => dispatch(toggleTodo(todo.id))} />
             <div className="grid  w-full group/todobox gap-y-1">
                 <input type="text" placeholder='Enter Todo' className='w-full px-2  disabled:bg-inherit line-through' disabled value={todo.title} />
                 <input placeholder='Enter Description' className={`px-2 text-xs  disabled:bg-inherit line-through ${todo.description ? 'inline' : 'hidden'}`} disabled value={todo.description} />
