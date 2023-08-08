@@ -29,24 +29,22 @@ const todoSlice = createSlice({
       console.log(action.payload)
       const item = state.todos.find(todo => todo.id === action.payload.id)
       if (item) {
-        item.title = action.payload.title,
-          item.description = action.payload.description,
-          item.priority = action.payload.priority,
-          item.dueDate = action.payload.dueDate,
-          item.done = action.payload.done
+        item.title = action.payload.title;
+        item.description = action.payload.description;
+        item.priority = action.payload.priority;
+        item.dueDate = action.payload.dueDate;
+        item.done = action.payload.done;
       }
     },
     searchTodo: (state, action) => {
       if (action.payload) {
         state.filterTodo = state.todos.filter((item) => item.title.startsWith(action.payload) || item.description.startsWith(action.payload))
-        state.notFound = state.filterTodo.length === 0
+        state.notFound = state.filterTodo.length === 0 ? true : false
       }
       else {
         state.filterTodo = null
         state.notFound = false
       }
-
-
     }
 
   },
