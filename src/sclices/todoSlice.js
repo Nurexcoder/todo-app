@@ -24,7 +24,6 @@ const todoSlice = createSlice({
       state.todos = state.todos.filter((todo) => todo.id !== action.payload);
     },
     editTodo: (state, action) => {
-      console.log(action.payload)
       const item = state.todos.find(todo => todo.id === action.payload.id)
       if (item) {
         item.title = action.payload.title;

@@ -7,8 +7,9 @@ import PriorityBox from './PriorityBox'
 import { todoVariants } from '../../constants'
 import { toggleTodo } from '../../sclices/todoSlice'
 import { MoreOutlined } from '@ant-design/icons'
+import Confetti from 'react-confetti'
 
-const TodoItem = ({ todo,dropdownItems }) => {
+const TodoItem = ({ todo, dropdownItems }) => {
     const dispatch = useDispatch()
 
     return (

@@ -22,6 +22,7 @@ const TodoView = () => {
     })
     const [activeKey, setActiveKey] = useState(null)
     const inputRef = useRef(null)
+    const divRef = useRef(null)
     const dispatch = useDispatch()
     const todos = useSelector(state => state.todos.filterTodo ? state.todos.filterTodo : state.todos.todos)
     const notFound = useSelector(state => state.todos.notFound)
@@ -39,9 +40,9 @@ const TodoView = () => {
         let editableTodo = { ...todos.find((item) => item.id === id) }
         if (editableTodo.dueDate)
             editableTodo.dueDate = dayjs('2023 ' + editableTodo.dueDate)
+        setActiveKey('1')
         setCurrentTodo(editableTodo)
 
-        setActiveKey('1')
         inputRef.current?.scrollIntoView({ behavior: 'smooth' });
         inputRef.current?.focus();
 
@@ -105,6 +106,14 @@ const TodoView = () => {
             [e.target.name]: e.target.value,
         });
     }
+    const clearCurTodo = () => {
+        setCurrentTodo({
+            title: '',
+            description: '',
+            priority: 0,
+            dueDate: '',
+        });
+    }
     const addItemsMenu = [
         {
             key: '1',
@@ -112,7 +121,9 @@ const TodoView = () => {
                 {currentTodo.id ? 'Edit Todo' : 'Add Todo'}
             </h3>,
 
-            children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange} currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef} />
+            children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
+                currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef}
+                divRef={divRef} clearCurTodo={clearCurTodo} />
 
         },
     ]
@@ -158,7 +169,7 @@ const TodoView = () => {
 
                     <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />
                 </> : <h3 className='text-lg font-semibold'>No Matching Todos</h3>}
-                
+
             </div>
 
         </div>
