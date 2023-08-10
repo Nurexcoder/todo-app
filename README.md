@@ -32,9 +32,10 @@
 
 ## TechStack Used
   1. React
-  2. Redux
+  2. Redux (React Redux,ReduxToolkit)
   3. Tailwindcss
   4. Antd
+  5. Framer Motion
 
 ## Demo
 ### Desktop View

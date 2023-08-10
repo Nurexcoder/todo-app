@@ -1,6 +1,6 @@
 import { CalculatorOutlined, CalendarFilled, CalendarOutlined, DeleteOutlined, EditOutlined, FlagFilled, FlagOutlined, MinusOutlined, MoreOutlined, PlusOutlined } from '@ant-design/icons'
-import { Checkbox, Collapse, DatePicker, Dropdown, Menu, Select, Tooltip } from 'antd'
-import React, { useEffect, useRef, useState } from 'react'
+import { Checkbox, Collapse, DatePicker, Dropdown, Menu, Select, Tooltip, notification } from 'antd'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTodo, deleteTodo, editTodo, toggleTodo } from '../sclices/todoSlice'
 import { motion } from 'framer-motion';
@@ -34,7 +34,6 @@ const TodoView = () => {
     //filter the not completed task by priority
     pendingTaskes.sort((a, b) => (b.priority - a.priority))
 
-
     const handleEdit = (id) => {
 
         let editableTodo = { ...todos.find((item) => item.id === id) }
@@ -47,23 +46,32 @@ const TodoView = () => {
         inputRef.current?.focus();
 
     }
+    const clearCurTodo = () => {
+        setCurrentTodo({
+            title: '',
+            description: '',
+            priority: 0,
+            dueDate: '',
+        });
+        setActiveKey()
+    }
+
+    const handleItemDelete = (id) => {
+        dispatch(deleteTodo(id))
+        if (id === currentTodo?.id) {
+            clearCurTodo()
+        }
+
+    }
 
 
 
-    const dropdownItems = (id) => (
-        <Menu >
-            <Menu.Item key="1">
-                <button className='flex items-center gap-x-2 px-2' onClick={() => handleEdit(id)}>
-                    <EditOutlined />  Edit Todo
-                </button>
-            </Menu.Item>
-            <Menu.Item key="2">
-                <button className='flex items-center gap-x-2 px-2' onClick={() => dispatch(deleteTodo(id))} >
-                    <DeleteOutlined />  Delete Todo
-                </button>
-            </Menu.Item>
-        </Menu>
-    )
+    const handleChange = (e) => {
+        setCurrentTodo({
+            ...currentTodo,
+            [e.target.name]: e.target.value,
+        });
+    }
 
 
     const handleSubmit = (e) => {
@@ -97,23 +105,26 @@ const TodoView = () => {
                 priority: 0,
                 dueDate: '',
             });
+            setActiveKey()
         }
     };
 
-    const handleChange = (e) => {
-        setCurrentTodo({
-            ...currentTodo,
-            [e.target.name]: e.target.value,
-        });
-    }
-    const clearCurTodo = () => {
-        setCurrentTodo({
-            title: '',
-            description: '',
-            priority: 0,
-            dueDate: '',
-        });
-    }
+    const dropdownItems = (id) => (
+        <Menu >
+            <Menu.Item key="1">
+                <button className='flex items-center gap-x-2 px-2' onClick={() => handleEdit(id)}>
+                    <EditOutlined />  Edit Todo
+                </button>
+            </Menu.Item>
+            <Menu.Item key="2">
+                <button className='flex items-center gap-x-2 px-2' onClick={() => handleItemDelete(id)} >
+                    <DeleteOutlined />  Delete Todo
+                </button>
+            </Menu.Item>
+        </Menu>
+    )
+
+
     const addItemsMenu = [
         {
             key: '1',
@@ -123,7 +134,7 @@ const TodoView = () => {
 
             children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
                 currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef}
-                divRef={divRef} clearCurTodo={clearCurTodo} />
+                clearCurTodo={clearCurTodo} />
 
         },
     ]
@@ -137,13 +148,13 @@ const TodoView = () => {
             <div className="grid gap-5">
 
                 {completedTaskes?.map((todo) =>
-                    <CompletedTodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />)}
+                    <CompletedTodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} clearCurTodo={clearCurTodo} />)}
             </div>
 
 
     }]
 
-
+    console.log(todos)
     return (
         <div className='flex flex-col w-11/12 mx-auto max-w-4xl bg-white shadow-sm p-4 gap-10 mb-10'>
             <h1 className="text-2xl font-bold">
