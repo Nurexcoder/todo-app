@@ -155,22 +155,21 @@ const TodoView = () => {
     }]
 
     return (
-        <div className='flex flex-col w-11/12 mx-auto max-w-4xl bg-white shadow-sm p-4 gap-10 mb-10'>
+        <div className='flex flex-col w-11/12 md:w-full mx-auto  bg-white shadow-sm p-4 gap-10 mb-10 col-span-12 md:col-span-9 h-full rounded-md'>
             <h1 className="text-2xl font-bold">
                 My Todos
             </h1>
 
             <div className="grid gap-5 w-full ">
-                <Collapse items={addItemsMenu}
+                {/* <Collapse items={addItemsMenu}
                     expandIcon={({ isActive }) => <>
                         {!isActive ? <PlusOutlined rotate={90} /> : <MinusOutlined rotate={180} />}
                     </>}
-                    activeKey={activeKey} onChange={(key) => setActiveKey(key.length ? key[0] : null)} />
+                    activeKey={activeKey} onChange={(key) => setActiveKey(key.length ? key[0] : null)} /> */}
 
                 {!notFound ? <>
 
-                    <div className="w-full flex flex-col gap-5 min-h-[10rem] px-2">
-                        <h3 className='text-lg font-semibold'>Pending Tasks</h3>
+                    <div className="w-full grid md:grid-cols-2  gap-5 min-h-[10rem] px-2">
                         {pendingTaskes?.map((todo) =>
                             <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
                         )

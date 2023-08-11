@@ -3,15 +3,19 @@ import { Provider } from 'react-redux';
 import { store } from '../store';
 import Navbar from '../components/Navbar';
 import TodoView from '../components/TodoView';
+import SideBar from '../components/SideBar';
 
 const MainPage = () => {
   return (
     <div className="h-screen overflow-y-scroll flex flex-col items-center gap-5 bg-slate-100 relative">
       <Navbar />
-        
-      <TodoView/>
+      <div className="grid grid-cols-12 w-full justify-center  max-w-[1440px] h-full mx-auto p-2 md:p-4 gap-x-10">
+        <SideBar/>
+
+        <TodoView />
+      </div>
     </div>
   )
 }
 
-export default  MainPage
+export default MainPage

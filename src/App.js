@@ -3,6 +3,7 @@ import React from 'react';
 import MainPage from './pages/MainPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AddTodoPage from './pages/AddTodoPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
       <Routes>
         <Route path='/' element={<MainPage />} />
         <Route path='/add' element={<AddTodoPage />} />
-
+        <Route path='/login' element={<LoginPage/>}/>
       </Routes>
 
     </BrowserRouter>
