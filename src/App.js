@@ -1,17 +1,19 @@
 // src/App.js
 import React from 'react';
-import { Provider } from 'react-redux';
-import { store } from './store';
-import Navbar from './components/Navbar';
-import TodoView from './components/TodoView';
+import MainPage from './pages/MainPage';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import AddTodoPage from './pages/AddTodoPage';
 
 function App() {
   return (
-    <div className="h-screen overflow-y-scroll flex flex-col items-center gap-5 bg-slate-100 relative">
-      <Navbar />
-        
-      <TodoView/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<MainPage />} />
+        <Route path='/add' element={<AddTodoPage />} />
+
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 

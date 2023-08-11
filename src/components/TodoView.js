@@ -154,7 +154,6 @@ const TodoView = () => {
 
     }]
 
-    console.log(todos)
     return (
         <div className='flex flex-col w-11/12 mx-auto max-w-4xl bg-white shadow-sm p-4 gap-10 mb-10'>
             <h1 className="text-2xl font-bold">
