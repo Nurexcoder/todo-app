@@ -1,8 +1,13 @@
 import React from 'react'
+import { signInWithGoogle } from '../utils/Firebase'
 
 const LoginPage = () => {
   return (
-    <div>LoginPage</div>
+    <div>
+        <button onClick={signInWithGoogle}>
+            Signin
+        </button>
+    </div>
   )
 }
 

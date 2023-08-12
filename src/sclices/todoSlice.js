@@ -1,10 +1,45 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { firestore, todosRef } from '../utils/Firebase';
+import { getAuth } from "firebase/auth";
+
+
+const auth = getAuth();
+const user = auth.currentUser;
+
+export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (_, { getState }) => {
+  const userId = "cD0nlcnFnRNb5SmkRfc2gTAa18M2";
+  console.log(user)
+  const snapshot = await todosRef.where("userId", "==","cD0nlcnFnRNb5SmkRfc2gTAa18M2").get();
+
+  if (snapshot.empty) {
+    console.log("No matching todos.");
+    return;
+  }
+
+  let todos = [];
+  snapshot?.forEach((doc) => {
+    todos.push(doc.data());
+  });
+
+  return todos;
+});
+
+export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, { getState }) => {
+  const userId = props?.userId;
+  const todoRef = firestore.collection('todos').doc();
+  await todoRef.set({
+    title:props?.title,
+    createdAt: new Date(),
+    userId,
+  });
+});
 
 const todoSlice = createSlice({
   name: 'todos',
   initialState: {
 
     todos: [],
+    userTodos:[],
     filterTodo: null,
     notFound: false
 
@@ -44,6 +79,23 @@ const todoSlice = createSlice({
       }
     }
 
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUserTodos.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchUserTodos.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.userTodos = action.payload;
+      })
+      .addCase(fetchUserTodos.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(addTodoFirebase.fulfilled, (state) => {
+        state.status = 'idle';
+      });
   },
 });
 

@@ -12,12 +12,12 @@ const TodoForm = ({ handleChange, handleSubmit, currentTodo, setCurrentTodo,inpu
         return current && current <= dayjs().startOf('day');
       }
     return (
-        <form className="flex w-full items-start gap-x-4 gap-y-4 " onSubmit={handleSubmit } >
+        <form className="flex w-full items-start gap-x-4 gap-y-4 bg-white p-4 rounded-md " onSubmit={handleSubmit } >
             <Checkbox className='py-1'  />
 
             <div className="grid gap-y-2 w-full group/todobox">
-                <input type="text" name='title' ref={inputRef} placeholder='Enter Todo' value={currentTodo.title} onChange={handleChange} className='w-full px-2 py-1' />
-                <textarea name='description' placeholder='Enter Description' value={currentTodo.description} onChange={handleChange} className='px-2 text-sm py-1' />
+                <input type="text" name='title' ref={inputRef} placeholder='Enter Todo' value={currentTodo.title} onChange={handleChange} className='w-full px-2 py-1 border rounded-md' />
+                <textarea name='description' placeholder='Enter Description' value={currentTodo.description} onChange={handleChange} className='px-2 text-sm py-1 border rounded-md' />
                 <motion.div initial="hidden" animate="visible" variants={todoVariants} className="flex gap-x-3 ">
                     {currentTodo.dueDate ? <DateBox date={currentTodo.dueDate}  /> : ''}
                     {currentTodo.priority ? <PriorityBox priority={currentTodo.priority} /> : ''}

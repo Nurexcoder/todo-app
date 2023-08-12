@@ -2,7 +2,7 @@ import { CalculatorOutlined, CalendarFilled, CalendarOutlined, DeleteOutlined, E
 import { Checkbox, Collapse, DatePicker, Dropdown, Menu, Select, Tooltip, notification } from 'antd'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTodo, deleteTodo, editTodo, toggleTodo } from '../sclices/todoSlice'
+import { addTodo, deleteTodo, editTodo, fetchUserTodos, toggleTodo } from '../sclices/todoSlice'
 import { motion } from 'framer-motion';
 import PriorityBox from './customComponents/PriorityBox'
 import DateBox from './customComponents/DateBox'
@@ -24,7 +24,10 @@ const TodoView = () => {
     const inputRef = useRef(null)
     const divRef = useRef(null)
     const dispatch = useDispatch()
-    const todos = useSelector(state => state.todos.filterTodo ? state.todos.filterTodo : state.todos.todos)
+    const todos = useSelector(state => state.todos?.filterTodo ? state.todos.filterTodo : state.todos.todos)
+    const userTodos = useSelector(state => state.todos.userTodos)
+    console.log(userTodos)
+    return;
     const notFound = useSelector(state => state.todos.notFound)
 
     const completedTaskes = todos.filter((item) => item.done)
@@ -109,6 +112,9 @@ const TodoView = () => {
         }
     };
 
+   
+    
+
     const dropdownItems = (id) => (
         <Menu >
             <Menu.Item key="1">
@@ -155,7 +161,7 @@ const TodoView = () => {
     }]
 
     return (
-        <div className='flex flex-col w-11/12 md:w-full mx-auto  bg-white shadow-sm p-4 gap-10 mb-10 col-span-12 md:col-span-9 h-full rounded-md'>
+        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto  bg-white shadow-sm p-4 gap-10 mb-10 col-span-12 md:col-span-9 h-full rounded-md'>
             <h1 className="text-2xl font-bold">
                 My Todos
             </h1>

@@ -61,14 +61,14 @@ export default function DateCalendarServerRequest() {
     const requestAbortController = React.useRef(null);
     const [isLoading, setIsLoading] = React.useState(false);
     const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
     const [currentTodo, setCurrentTodo] = React.useState({
         title: '',
         description: '',
         priority: 0,
         dueDate: '',
     })
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
 
     const handleChange = (e) => {
         setCurrentTodo({
@@ -172,11 +172,8 @@ export default function DateCalendarServerRequest() {
                     }}
                 />
             </LocalizationProvider>
-            <Modal open={false}>
-                <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
-                    currentTodo={currentTodo} setCurrentTodo={setCurrentTodo}
-                    clearCurTodo={clearCurTodo} />
-            </Modal>
+            
+            
         </>
     );
 }
