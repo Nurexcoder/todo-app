@@ -3,12 +3,13 @@ import { GoogleCircleFilled, PlusOutlined, SearchOutlined } from '@ant-design/ic
 import { Input, Space } from 'antd';
 import { useDispatch } from 'react-redux';
 import { addTodo, addTodoFirebase, fetchUserTodos, searchTodo } from '../sclices/todoSlice';
-import { auth, signInWithGoogle } from '../utils/Firebase';
+import { auth } from '../utils/Firebase';
 import { Avatar, Divider, ListItemIcon, Menu, MenuItem, Modal } from '@mui/material';
-import { Logout } from '@mui/icons-material';
+import { Add, Logout } from '@mui/icons-material';
 import TodoForm from './customComponents/TodoForm';
 import { useNavigate } from 'react-router-dom';
 import { mS } from '../constants';
+import { handleSignOut, signInWithGoogle } from '../sclices/authSlice';
 const { Search } = Input;
 
 const style = {
@@ -27,67 +28,16 @@ const Navbar = () => {
   const [openTodo, setOpenTodo] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const handleOpenTodo = () => {
+    setOpenTodo(!openTodo)
+  }
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const navigate = useNavigate()
-  const [currentTodo, setCurrentTodo] = React.useState({
-    title: '',
-    description: '',
-    priority: 0,
-    dueDate: '',
-  })
 
-  const handleChange = (e) => {
-    setCurrentTodo({
-      ...currentTodo,
-      [e.target.name]: e.target.value,
-    });
-  }
-  const clearCurTodo = () => {
-    setCurrentTodo({
-      title: '',
-      description: '',
-      priority: 0,
-      dueDate: '',
-    });
-  }
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-
-    if (currentTodo.title) {
-
-      const formatedDate = currentTodo.dueDate ? currentTodo.dueDate?.$D + ' ' + mS[currentTodo.dueDate.$M] : ''
-      const tempCurrentTodo = { ...currentTodo }
-      tempCurrentTodo.dueDate = formatedDate
-
-
-      dispatch(
-        addTodoFirebase({
-          id: Date.now(),
-          title: currentTodo.title,
-          description: currentTodo.description,
-          priority: currentTodo.priority,
-          dueDate: formatedDate,
-          done: false,
-          userId:user.uid
-        })
-      );
-      setCurrentTodo({
-        title: '',
-        description: '',
-        priority: 0,
-        dueDate: '',
-      });
-      navigate('/')
-    }
-  };
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
@@ -99,23 +49,15 @@ const Navbar = () => {
     dispatch(searchTodo(e.target.value));
   }
 
-  const handleSignOut = async () => {
-    try {
-      await auth.signOut();
-    } catch (error) {
-      console.error(error);
-    }
-  };
   useEffect(() => {
     dispatch(fetchUserTodos())
-   }, [user])
-  console.log(user?.uid)
+  }, [user])
   return (
     <div className='flex w-full shadow-md bg-white h-max top-0 sticky z-50'>
       <div className="max-w-[1440px] w-full flex mx-auto items-center  justify-between  h-max p-4 gap-x-3 ">
 
-        <div className="flex">
-          <h1 className="text-blue-400 text-2xl font-bold w-max">Todo App</h1>
+        <div className="flex items-center">
+          <img src='/images/logo.png' alt='logo' className='w-32' />
         </div>
         <div className="flex items-center gap-x-5">
           {/* <div className='flex items-center rounded-full border border-blue-400 p-2 max-w-sm '>
@@ -124,26 +66,29 @@ const Navbar = () => {
               <SearchOutlined />
             </button>
           </div> */}
-          <button className='bg-blue-400 py-2 px-5 lg:px-3 text-white rounded-full hover:bg-blue-500 flex items-center gap-x-1 '><PlusOutlined />
+          <button className='bg-[#00A3FF] py-2 px-5 lg:px-3 text-white rounded-full hover:bg-blue-500 flex items-center gap-x-1 font-bold text-xl font-poppins ' onClick={handleOpenTodo}>
+
+            <Add sx={{ fontWeight: '800' }} />
             <span className='hidden lg:inline'>
 
               Add Todo
             </span>
           </button>
-          {
-            !user ?
-              <button className='bg-black/90 py-2 px-6 text-white rounded-full hover:bg-black/100 flex items-center gap-x-1' onClick={signInWithGoogle}>Signin</button> :
-              <div onClick={handleClick} >
+          <div className="">
 
-                <Avatar alt={user?.displayName} src={user?.photoURL} />
-              </div>
-          }
+            {
+              !user ?
+                <button className='bg-black/90 py-2 px-6 text-white rounded-full hover:bg-black/100 flex items-center gap-x-1 ' onClick={() => dispatch(signInWithGoogle())}>Signin</button> :
+                <div onClick={handleClick} >
+
+                  <Avatar alt={user?.displayName} src={user?.photoURL} />
+                </div>
+            }
+          </div>
           <Modal open={openTodo}>
             <div style={style} className="">
 
-              <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
-                currentTodo={currentTodo} setCurrentTodo={setCurrentTodo}
-                clearCurTodo={clearCurTodo} />
+              <TodoForm handleClose={handleOpenTodo} />
             </div>
           </Modal>
 
@@ -191,7 +136,7 @@ const Navbar = () => {
             </MenuItem>
             <Divider />
 
-            <MenuItem onClick={handleSignOut}>
+            <MenuItem onClick={() => dispatch(handleSignOut())}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

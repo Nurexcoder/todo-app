@@ -6,12 +6,13 @@ import { addTodo, deleteTodo, editTodo, fetchUserTodos, toggleTodo } from '../sc
 import { motion } from 'framer-motion';
 import PriorityBox from './customComponents/PriorityBox'
 import DateBox from './customComponents/DateBox'
-import { mS, todoVariants } from '../constants'
+import { mS, sortArray, todoVariants, todoViewType } from '../constants'
 import dayjs from 'dayjs'
 import TodoItem from './customComponents/TodoItem'
 import CompletedTodoItem from './customComponents/CompletedTodoItem'
 import TodoForm from './customComponents/TodoForm'
-
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import DesignedTodoItems from './customComponents/DesignedTodoItems'
 
 const TodoView = () => {
     const [currentTodo, setCurrentTodo] = useState({
@@ -24,11 +25,20 @@ const TodoView = () => {
     const inputRef = useRef(null)
     const divRef = useRef(null)
     const dispatch = useDispatch()
-    const todos = useSelector(state => state.todos?.filterTodo ? state.todos.filterTodo : state.todos.todos)
-    const userTodos = useSelector(state => state.todos.userTodos)
+    const todos = useSelector(state => state.reducer.todos.todos)
+    const auth = useSelector(state => state.reducer.auth)
+
+    const userTodos=useSelector(state=>state.reducer.todos.userTodos)
     console.log(userTodos)
-    return;
-    const notFound = useSelector(state => state.todos.notFound)
+    useEffect(() => {
+        console.log("hi")
+        if(auth?.user){
+            dispatch(fetchUserTodos(auth.user.uid))
+
+        }
+    },[auth?.user])
+
+    const notFound = useSelector(state => state.reducer.todos.notFound)
 
     const completedTaskes = todos.filter((item) => item.done)
 
@@ -112,8 +122,8 @@ const TodoView = () => {
         }
     };
 
-   
-    
+
+
 
     const dropdownItems = (id) => (
         <Menu >
@@ -131,19 +141,19 @@ const TodoView = () => {
     )
 
 
-    const addItemsMenu = [
-        {
-            key: '1',
-            label: <h3 className=" font-semibold">
-                {currentTodo.id ? 'Edit Todo' : 'Add Todo'}
-            </h3>,
+    // const addItemsMenu = [
+    //     {
+    //         key: '1',
+    //         label: <h3 className=" font-semibold">
+    //             {currentTodo.id ? 'Edit Todo' : 'Add Todo'}
+    //         </h3>,
 
-            children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
-                currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef}
-                clearCurTodo={clearCurTodo} />
+    //         children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
+    //             currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef}
+    //             clearCurTodo={clearCurTodo} />
 
-        },
-    ]
+    //     },
+    // ]
 
 
 
@@ -161,25 +171,44 @@ const TodoView = () => {
     }]
 
     return (
-        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto  bg-white shadow-sm p-4 gap-10 mb-10 col-span-12 md:col-span-9 h-full rounded-md'>
-            <h1 className="text-2xl font-bold">
-                My Todos
-            </h1>
+        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 2xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
-            <div className="grid gap-5 w-full ">
-                {/* <Collapse items={addItemsMenu}
-                    expandIcon={({ isActive }) => <>
-                        {!isActive ? <PlusOutlined rotate={90} /> : <MinusOutlined rotate={180} />}
-                    </>}
-                    activeKey={activeKey} onChange={(key) => setActiveKey(key.length ? key[0] : null)} /> */}
+            <div className="flex lg:justify-between gap-y-5 lg:items-center flex-col lg:flex-row">
+                <div className="flex lg:items-center  gap-x-3 lg:justify-center flex-row">
+                    <div className="font-poppins font-bold text-base leading-tight">
+                        <h3>
+                            Friday 11
+                        </h3>
+                        <h3>
+                            Today&apos;s
+                        </h3>
+                    </div>
+                    <h1 className="text-4xl font-bold font-poppins ">
+                        TO-DO
+                    </h1>
+                </div>
+                <div className=" flex gap-x-4 items-start lg:items-center">
+                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large"  className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />}/>
+                    <Select defaultValue={0} style={{ width: 120 }} options={todoViewType} size="large"  suffixIcon={<KeyboardArrowDownIcon />} />
+                    
+                </div>
+            </div>
+
+            <div className="grid gap-5 w-full  bg-[#00A3FF4F] h-full rounded-xl p-4">
 
                 {!notFound ? <>
-
-                    <div className="w-full grid md:grid-cols-2  gap-5 min-h-[10rem] px-2">
-                        {pendingTaskes?.map((todo) =>
+                    <h3 className="text-xl font-bold font-poppins uppercase">
+                        Pending Tasks : 9
+                    </h3>
+                    <div className="w-full grid md:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2">
+                        {/* {pendingTaskes?.map((todo) =>
                             <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
                         )
-                        }
+                        } */}
+                        <DesignedTodoItems priority={0}/>
+                        <DesignedTodoItems priority={1}/>
+                        <DesignedTodoItems priority={2}/>
+                        <DesignedTodoItems priority={3}/>
                     </div>
 
                     <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />

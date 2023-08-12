@@ -1,16 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { firestore, todosRef } from '../utils/Firebase';
-import { getAuth } from "firebase/auth";
 
 
-const auth = getAuth();
-const user = auth.currentUser;
-
-export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (_, { getState }) => {
-  const userId = "cD0nlcnFnRNb5SmkRfc2gTAa18M2";
-  console.log(user)
-  const snapshot = await todosRef.where("userId", "==","cD0nlcnFnRNb5SmkRfc2gTAa18M2").get();
-
+export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (user, { getState }) => {
+  const snapshot = await todosRef.where("userId", "==",user ).get();
   if (snapshot.empty) {
     console.log("No matching todos.");
     return;
@@ -20,6 +13,7 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (_,
   snapshot?.forEach((doc) => {
     todos.push(doc.data());
   });
+  console.log(todos)
 
   return todos;
 });

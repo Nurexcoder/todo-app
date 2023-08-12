@@ -47,12 +47,12 @@ function ServerDay(props) {
         !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
     return (
-        <div className="relative">
+        <div className="relative ">
 
             <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
-            <span className='absolute left-[40%] top-[50%] translate-x-1/2 -translate-y-1/2 text-red-900 text-2xl font-bold'>
+            {/* <span className='absolute left-[40%] top-[50%] translate-x-1/2 -translate-y-1/2 text-red-900 text-2xl font-bold'>
                 .
-            </span>
+            </span> */}
         </div>
     );
 }
@@ -154,17 +154,20 @@ export default function DateCalendarServerRequest() {
     };
 
     return (
-        <>
+        <div className='bg-secondary shadow-lg w-full rounded-xl'>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateCalendar
                     defaultValue={initialValue}
+
                     // loading={isLoading}
+
                     onMonthChange={handleMonthChange}
                     // renderLoading={() => <DayCalendarSkeleton />}
                     slots={{
                         day: ServerDay,
                     }}
+                    
                     slotProps={{
                         day: {
                             highlightedDays,
@@ -174,6 +177,6 @@ export default function DateCalendarServerRequest() {
             </LocalizationProvider>
             
             
-        </>
+        </div>
     );
 }

@@ -1,10 +1,10 @@
 import React from 'react'
-import { signInWithGoogle } from '../utils/Firebase'
+// import { signInWithGoogle } from '../utils/Firebase'
 
 const LoginPage = () => {
   return (
     <div>
-        <button onClick={signInWithGoogle}>
+        <button >
             Signin
         </button>
     </div>
