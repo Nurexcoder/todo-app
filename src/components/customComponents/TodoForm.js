@@ -14,7 +14,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@mui/material'
 
 
-const priorityArray = [ { value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]
+const priorityArray = [{ value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]
 const TodoForm = ({ handleClose }) => {
     const [currentTodo, setCurrentTodo] = React.useState({
         title: '',
@@ -41,24 +41,23 @@ const TodoForm = ({ handleClose }) => {
     }
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault();
 
 
         if (currentTodo.title) {
 
-            const formatedDate = currentTodo.dueDate ? currentTodo.dueDate?.$D + ' ' + mS[currentTodo.dueDate.$M] : ''
             const tempCurrentTodo = { ...currentTodo }
-            tempCurrentTodo.dueDate = formatedDate
+            // tempCurrentTodo.dueDate = formatedDate
 
-
-            dispatch(
+            console.log(tempCurrentTodo)
+             dispatch(
                 addTodoFirebase({
                     id: Date.now(),
                     title: currentTodo.title,
                     description: currentTodo.description,
                     priority: currentTodo.priority,
-                    dueDate: formatedDate,
+                    dueDate: currentTodo.dueDate,
                     done: false,
                 })
             );
@@ -74,7 +73,6 @@ const TodoForm = ({ handleClose }) => {
     function disabledDate(current) {
         return current && current <= dayjs().startOf('day');
     }
-    console.log(currentTodo)
     return (
         <form className="flex w-full items-start gap-x-4 gap-y-4 bg-white p-4 rounded-md " onSubmit={handleSubmit} >
             <Checkbox className='py-1' />
@@ -95,7 +93,7 @@ const TodoForm = ({ handleClose }) => {
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 {/* <DatePicker value={currentTodo.dueDate} className='z-50' onChange={(value) => setCurrentTodo({ ...currentTodo, dueDate: value })} disabledDate={disabledDate} /> */}
                                 <DemoContainer components={['DatePicker']}>
-                                    <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} />
+                                    <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} onChange={(date) => setCurrentTodo({ ...currentTodo, dueDate: date })} />
                                 </DemoContainer>
                             </LocalizationProvider>
                         </div>

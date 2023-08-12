@@ -8,7 +8,7 @@ const DesignedTodoItems = ({ priority }) => {
 
     return (
         <div className={`rounded-2xl ${priority === 1 ? 'bg-low' : priority === 2 ? 'bg-medium' : priority === 3 ? 'bg-high' : 'bg-gen'} bg-black shadow-todoItem flex items-start p-2 py-6 gap-x-2`}>
-            <Checkbox icon={<CheckCheckox />} checkedIcon={<CheckedCheckox />} sx={{
+            <Checkbox icon={<CheckCheckox priority={priority} />} checkedIcon={<CheckedCheckox priority={priority} />} sx={{
                 color: 'transparent', '&.Mui-checked': {
                     color: 'transparent',
                 },

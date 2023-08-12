@@ -167,7 +167,7 @@ export default function DateCalendarServerRequest() {
                     slots={{
                         day: ServerDay,
                     }}
-                    
+
                     slotProps={{
                         day: {
                             highlightedDays,
@@ -175,8 +175,8 @@ export default function DateCalendarServerRequest() {
                     }}
                 />
             </LocalizationProvider>
-            
-            
+
+
         </div>
     );
 }

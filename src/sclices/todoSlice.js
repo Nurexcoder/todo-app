@@ -1,9 +1,10 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { firestore, todosRef } from '../utils/Firebase';
+import firebase from '../utils/Firebase';
 
 
 export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (user, { getState }) => {
-  const snapshot = await todosRef.where("userId", "==",user ).get();
+  const snapshot = await todosRef.where("userId", "==", user).get();
   if (snapshot.empty) {
     console.log("No matching todos.");
     return;
@@ -13,19 +14,28 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
   snapshot?.forEach((doc) => {
     todos.push(doc.data());
   });
-  console.log(todos)
 
   return todos;
 });
 
 export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, { getState }) => {
-  const userId = props?.userId;
+
+  console.log(props)
+  const timestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
+
   const todoRef = firestore.collection('todos').doc();
-  await todoRef.set({
-    title:props?.title,
+  console.log(timestamp)
+  console.log(getState().reducer.auth.user?.uid)
+  const res = await todoRef.set({
+    title: props?.title,
+    description: props?.description,
+    priority: props?.priority,
     createdAt: new Date(),
-    userId,
+    dueDate: timestamp,
+    userId: getState().reducer.auth.user?.uid,
+    done:false
   });
+  console.log(res)
 });
 
 const todoSlice = createSlice({
@@ -33,7 +43,7 @@ const todoSlice = createSlice({
   initialState: {
 
     todos: [],
-    userTodos:[],
+    userTodos: [],
     filterTodo: null,
     notFound: false
 
