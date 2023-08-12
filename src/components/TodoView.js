@@ -171,7 +171,7 @@ const TodoView = () => {
     }]
 
     return (
-        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 2xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
+        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
             <div className="flex lg:justify-between gap-y-5 lg:items-center flex-col lg:flex-row">
                 <div className="flex lg:items-center  gap-x-3 lg:justify-center flex-row">
@@ -194,13 +194,13 @@ const TodoView = () => {
                 </div>
             </div>
 
-            <div className="grid gap-5 w-full  bg-[#00A3FF4F] h-full rounded-xl p-4">
+            <div className="flex flex-col gap-5 w-full  bg-[#00A3FF4F] h-full rounded-xl p-4 justify-start ">
 
                 {!notFound ? <>
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : 9
                     </h3>
-                    <div className="w-full grid md:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2">
+                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2">
                         {/* {pendingTaskes?.map((todo) =>
                             <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
                         )

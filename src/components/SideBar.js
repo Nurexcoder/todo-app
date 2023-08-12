@@ -11,7 +11,7 @@ const SideBar = () => {
   const user = useSelector(state => state.reducer?.auth?.user)
 
   return (
-    <div className=' hidden md:flex flex-col items-center  md:col-span-5 lg:col-span-4  2xl:col-span-3  bg-primary rounded-3xl px-3 py-4 gap-y-4 sticky top-0'>
+    <div className=' hidden md:flex flex-col items-center  md:col-span-5 lg:col-span-4  xl:col-span-3  bg-primary rounded-3xl px-3 py-4 gap-y-4 sticky top-0'>
       <div className="bg-secondary rounded-xl w-full p-3 flex items-center  gap-x-4  shadow-lg">
         <Avatar alt={user?.displayName} sx={{ width: 46, height: 46 }} src={user?.photoURL} />
         <div className="flex flex-col font-poppins ">

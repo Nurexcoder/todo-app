@@ -1,7 +1,7 @@
 import { SvgIcon } from '@mui/material'
 import React from 'react'
 
-const CheckCheckox = () => {
+const CheckedCheckox = () => {
     return (
         <SvgIcon >
             <path d="M0 0H24.834V24.834H0V0Z" fill="white" fill-opacity="0.01" />
@@ -12,4 +12,4 @@ const CheckCheckox = () => {
     )
 }
 
-export default CheckCheckox
+export default CheckedCheckox
