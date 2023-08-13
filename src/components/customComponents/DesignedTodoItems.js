@@ -2,11 +2,28 @@ import { Checkbox, SvgIcon } from '@mui/material'
 import React from 'react'
 import CheckCheckox from '../customIcons/CheckCheckox'
 import CheckedCheckox from '../customIcons/CheckedCheckBox'
+import dayjs from 'dayjs'
+import { mS } from '../../constants'
 
+const formatAMPM = (date) => {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'pm' : 'am';
+
+    hours %= 12;
+    hours = hours || 12;
+    minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+    const strTime = `${hours}:${minutes} ${ampm}`;
+
+    return strTime;
+};
 const DesignedTodoItems = ({ todo }) => {
 
-
+    const formatedDate = todo.dueDate ? todo.dueDate.toDate().getDate() + ' ' + mS[todo.dueDate.toDate().getMonth()] : null
+    const formatedTime = todo.dueTime ? formatAMPM(todo.dueTime.toDate()) : null
     return (
+
         <div className={`rounded-2xl ${todo.priority === 1 ? 'bg-low' : todo.priority === 2 ? 'bg-medium' : todo.priority === 3 ? 'bg-high' : 'bg-gen min-h-[109px]'} shadow-todoItem flex items-start p-2 py-6 gap-x-2 justify-between `}>
             <div className="flex gap-2">
 
@@ -36,16 +53,17 @@ const DesignedTodoItems = ({ todo }) => {
 
                     }
                 </div>
-                <div className={`${(todo.priority === 3 || todo.priority === 0) ? 'text-white' : 'text-black'} text-xs font-semibold w-max  leading-none `}>
-                    Due: 12:22 PM
+                <div className={`${(todo.priority === 3 || todo.priority === 0) ? 'text-white' : 'text-black'} ${formatedTime ? 'inline' : 'hidden'} text-xs font-semibold w-max  leading-none `}>
+                    Due: {formatedTime}
                 </div>
 
-                <div className={`${(todo.priority === 3 || todo.priority === 0) ? 'text-white' : 'text-black'} text-xs font-semibold w-max  leading-none`}>
-                    12 Aug
+                <div className={`${(todo.priority === 3 || todo.priority === 0) ? 'text-white' : 'text-black'} ${formatedDate ? 'inline' : 'hidden'} text-xs font-semibold w-max  leading-none`}>
+                    {formatedDate}
                 </div>
 
             </div>
         </div>
+
     )
 
 }

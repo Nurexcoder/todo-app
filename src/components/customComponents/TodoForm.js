@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Checkbox } from 'antd'
-import { mS, todoVariants } from '../../constants'
+import { mS, priorityArray, todoVariants } from '../../constants'
 import DateBox from './DateBox'
 import PriorityBox from './PriorityBox'
 import dayjs from 'dayjs'
@@ -12,17 +12,29 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@mui/material'
+import { TimePicker } from '@mui/x-date-pickers'
 
 
-const priorityArray = [{ value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]
+const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '40vw',
+    minWidth: 350,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+};
 const TodoForm = ({ handleClose }) => {
 
-    const auth=useSelector(state=>state.reducers?.auth?.user)
+    const auth = useSelector(state => state.reducers?.auth?.user)
     const [currentTodo, setCurrentTodo] = React.useState({
         title: '',
         description: '',
         priority: 0,
         dueDate: '',
+        dueTime:'',
     })
     const dispatch = useDispatch()
 
@@ -43,7 +55,7 @@ const TodoForm = ({ handleClose }) => {
     }
 
 
-    const handleSubmit = async(e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
 
@@ -53,13 +65,14 @@ const TodoForm = ({ handleClose }) => {
             // tempCurrentTodo.dueDate = formatedDate
 
             console.log(tempCurrentTodo)
-             dispatch(
+            dispatch(
                 addTodoFirebase({
                     id: Date.now(),
                     title: currentTodo.title,
                     description: currentTodo.description,
                     priority: currentTodo.priority,
                     dueDate: currentTodo.dueDate,
+                    dueTime: currentTodo.dueTime,
                     done: false,
                 })
             );
@@ -79,56 +92,73 @@ const TodoForm = ({ handleClose }) => {
         return current && current <= dayjs().startOf('day');
     }
     return (
-        <form className="flex w-full items-start gap-x-4 gap-y-4 bg-white p-4 rounded-md " onSubmit={handleSubmit} >
-            <Checkbox className='py-1' />
+        <div style={style} className="">
+            <form className="flex w-full items-start gap-x-4 gap-y-4 bg-white p-4 lg:p-8 rounded-md  flex-col " onSubmit={handleSubmit} >
+            <h1 className="text-2xl font-semibold">
+                Add Todo
+            </h1>
+                {/* <Checkbox className='py-1' /> */}
 
-            <div className="grid gap-y-2 w-full group/todobox">
-                <input type="text" name='title' placeholder='Enter Todo' value={currentTodo.title} onChange={handleChange} className='w-full px-2 py-1 border rounded-md' />
-                <textarea name='description' placeholder='Enter Description' value={currentTodo.description} onChange={handleChange} className='px-2 text-sm py-1 border rounded-md' />
-                <motion.div initial="hidden" animate="visible" variants={todoVariants} className="flex gap-x-3 ">
-                    {currentTodo.dueDate ? <DateBox date={currentTodo.dueDate} /> : ''}
-                    {currentTodo.priority ? <PriorityBox priority={currentTodo.priority} /> : ''}
+                <div className="grid gap-y-4 w-full group/todobox">
+                    <input type="text" name='title' placeholder='Enter Todo' value={currentTodo.title} onChange={handleChange} className='w-full px-2 py-1 border rounded-md' />
+                    <textarea name='description' placeholder='Enter Description' value={currentTodo.description} onChange={handleChange} className='px-2 text-sm py-1 border rounded-md' />
+                    <motion.div initial="hidden" animate="visible" variants={todoVariants} className="flex gap-x-3 ">
+                        {currentTodo.dueDate ? <DateBox date={currentTodo.dueDate} /> : ''}
+                        {currentTodo.priority ? <PriorityBox priority={currentTodo.priority} /> : ''}
 
-                </motion.div>
-                <div className=" gap-x-3  flex items-center " >
-                    <Tooltip title='Due Date'>
-                        <div className="flex-1 flex items-center">
+                    </motion.div>
+                    <div className=" gap-x-3  flex items-center flex-wrap" >
+                        <Tooltip title='Due Date'>
+                            <div className="flex-1 flex items-center">
 
 
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                {/* <DatePicker value={currentTodo.dueDate} className='z-50' onChange={(value) => setCurrentTodo({ ...currentTodo, dueDate: value })} disabledDate={disabledDate} /> */}
-                                <DemoContainer components={['DatePicker']}>
-                                    <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} onChange={(date) => setCurrentTodo({ ...currentTodo, dueDate: date })} />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                        </div>
-                    </Tooltip>
-                    <Tooltip title='Priority'>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    {/* <DatePicker value={currentTodo.dueDate} className='z-50' onChange={(value) => setCurrentTodo({ ...currentTodo, dueDate: value })} disabledDate={disabledDate} /> */}
+                                    <DemoContainer components={['DatePicker']}>
+                                        <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} onChange={(date) => setCurrentTodo({ ...currentTodo, dueDate: date })} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </div>
+                        </Tooltip>
 
-                        <div className="flex-1 flex items-center mt-[8px]">
+                        <Tooltip title='Priority'>
 
-                            <FormControl size='small' fullWidth >
-                                <InputLabel id="priority-select-label">Priority</InputLabel>
-                                <Select
-                                    id="priority-select"
-                                    label="Priority"
-                                    value={currentTodo.priority}
-                                    onChange={(value) => setCurrentTodo({ ...currentTodo, priority: value.target.value })}
-                                >
-                                    {priorityArray.map((item) => (
-                                        <MenuItem value={item.value} key={item.value}>{item.label}</MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
-                    </Tooltip>
+                            <div className="flex-1 flex items-center mt-[8px]">
+
+                                <FormControl size='small' fullWidth >
+                                    <InputLabel id="priority-select-label">Priority</InputLabel>
+                                    <Select
+                                        id="priority-select"
+                                        label="Priority"
+                                        value={currentTodo.priority}
+                                        onChange={(value) => setCurrentTodo({ ...currentTodo, priority: value.target.value })}
+                                    >
+                                        {priorityArray.map((item) => (
+                                            <MenuItem value={item.value} key={item.value}>{item.label}</MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                            </div>
+                        </Tooltip>
+                        <Tooltip title='Due Time'>
+                            <div className="flex-1 flex items-center">
+
+
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['TimePicker']}>
+                                        <TimePicker label="Due Time" slotProps={{ textField: { size: 'small' } }} onChange={(time) => setCurrentTodo({ ...currentTodo, dueTime: time })} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
+                            </div>
+                        </Tooltip>
+                    </div>
+                    <div className="justify-self-end flex gap-x-3 items-center">
+                        <button type='button' onClick={clearCurTodo} className='bg-red-400 p-2 rounded-md text-blue-50 hover:bg-red-500'>Cancel</button>
+                        <button type='submit' className='bg-blue-400 p-2 rounded-md text-blue-50 hover:bg-blue-500'>{currentTodo.id ? 'Edit Todo' : 'Add Todo'}</button>
+                    </div>
                 </div>
-                <div className="justify-self-end flex gap-x-3 items-center">
-                    <button type='button' onClick={clearCurTodo} className='bg-red-400 p-2 rounded-md text-blue-50 hover:bg-red-500'>Cancel</button>
-                    <button type='submit' className='bg-blue-400 p-2 rounded-md text-blue-50 hover:bg-blue-500'>{currentTodo.id ? 'Edit Todo' : 'Add Todo'}</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     )
 }
 

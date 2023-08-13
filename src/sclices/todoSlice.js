@@ -1,13 +1,28 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { firestore, todosRef } from '../utils/Firebase';
+import { query, where, orderBy, getDocs, collection } from "firebase/firestore";
 import firebase from '../utils/Firebase';
 
+const newTodoRef = collection(firestore, "todos")
 
 export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (userId, { getState }) => {
   const uid = userId || getState().reducer.auth.user?.uid
+  console.log(uid)
   if (!uid) return;
-  const query = todosRef.where("userId", "==", uid).orderBy('priority', 'asc');
-  const snapshot = await query.get()
+
+  let userTodoQuery;
+  // const requiredDate=getState().reducer.filterTodo
+  if (getState().reducer.todos.byOrder === 'priority') {
+    userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
+
+  }
+  else {
+
+    userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("dueDate", "asc"));
+  }
+
+
+  const snapshot = await getDocs(userTodoQuery)
   console.log(uid)
   if (snapshot.empty) {
     console.log("No matching todos.");
@@ -25,7 +40,8 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, { getState }) => {
 
   console.log(props)
-  const timestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
+  const datestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
+  const timestamp = props.dueTime ? firebase.firestore.Timestamp.fromDate(props.dueTime.$d) : null;
 
   const todoRef = firestore.collection('todos').doc();
   console.log(timestamp)
@@ -35,12 +51,26 @@ export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, {
     description: props?.description,
     priority: props?.priority,
     createdAt: new Date(),
-    dueDate: timestamp,
+    dueDate: datestamp,
+    dueTime: timestamp,
     userId: getState().reducer.auth.user?.uid,
     done: false
   });
   console.log(res)
 });
+
+export const deleteFirebaseTodo = createAsyncThunk('todos/deleteTodo', async (id, { getState }) => {
+  const todoRef = firestore.collection('todos').doc(id);
+  const res = await todoRef.delete();
+})
+
+export const toggleFirebaseTodo= createAsyncThunk('todos/toggleTodo', async (id, { getState }) => {
+  const todoRef = firestore.collection('todos').doc(id);
+  const res = await todoRef.update({
+    done: !getState().reducer.todos.todos.find((todo) => todo.id === id).done
+  });
+
+})
 
 const todoSlice = createSlice({
   name: 'todos',
@@ -49,7 +79,9 @@ const todoSlice = createSlice({
     todos: [],
     userTodos: [],
     filterTodo: null,
-    notFound: false
+    notFound: false,
+    byOrder: 'priority',
+    requiredDate:'today'
 
   }
   ,
@@ -99,11 +131,18 @@ const todoSlice = createSlice({
       })
       .addCase(fetchUserTodos.rejected, (state, action) => {
         state.status = 'failed';
+        console.log(state.error)
         state.error = action.error.message;
       })
       .addCase(addTodoFirebase.fulfilled, (state) => {
         state.status = 'idle';
-      });
+      })
+      .addCase(deleteFirebaseTodo.fulfilled, (state) => {
+        state.status = 'idle';
+      })
+      .addCase(toggleFirebaseTodo.fulfilled, (state) => {
+        state.status = 'idle';
+      })
   },
 });
 

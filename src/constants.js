@@ -7,28 +7,29 @@ export const todoFlashVariants = {
     visible: { opacity: 1, y: 0 },
     hidden: { opacity: 0, y: -10 },
 };
-export const sortArray=[
+export const sortArray = [
     {
-        label:'Priority',
-        value:0
+        label: 'Priority',
+        value: 0
     },
     {
-        label:'Due Date',
-        value:1
-    }
-] 
-
-export const todoViewType=[
-    {
-        label:'Today',
-        value:0
-    },
-    {
-        label:'Week',
-        value:1
-    },
-    {
-        label:'All',
-        value:2
+        label: 'Due Date',
+        value: 1
     }
 ]
+
+export const todoViewType = [
+    {
+        label: 'Today',
+        value: 0
+    },
+    {
+        label: 'Week',
+        value: 1
+    },
+    {
+        label: 'All',
+        value: 2
+    }
+]
+export const priorityArray = [{ value: 0, label: 'General' }, { value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]

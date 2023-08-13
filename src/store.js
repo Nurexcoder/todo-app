@@ -7,22 +7,21 @@ import authReducer from './sclices/authSlice';
 
 const persistConfig = {
   key: 'root', // Key for the storage
-  storage,     // Storage type (e.g., localStorage)
-  // You can also configure whitelist or blacklist for reducers
+  storage,
 };
 
 
+
+const persistedReducer = persistReducer(persistConfig, authReducer);
+
 const rootReducer = combineReducers({
-  auth: authReducer,
+  auth: persistedReducer,
   todos: todoReducer
 })
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
-
-
 export const store = configureStore({
   reducer: {
-    reducer: persistedReducer,
+    reducer: rootReducer,
 
   },
   middleware: [thunk]

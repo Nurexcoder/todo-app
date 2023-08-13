@@ -169,7 +169,7 @@ const TodoView = () => {
     }]
 
     return (
-        <div className='flex flex-col w-10/12 xs:w-11/12 md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
+        <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
             <div className="flex lg:justify-between gap-y-5 lg:items-center flex-col lg:flex-row">
                 <div className="flex lg:items-center  gap-x-3 lg:justify-center flex-row">
