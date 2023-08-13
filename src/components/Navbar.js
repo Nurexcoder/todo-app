@@ -12,16 +12,7 @@ import { mS } from '../constants';
 import { handleSignOut, signInWithGoogle } from '../sclices/authSlice';
 const { Search } = Input;
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+
 const Navbar = () => {
   const dispatch = useDispatch();
   const [user, setUser] = useState(null);
@@ -86,10 +77,7 @@ const Navbar = () => {
             }
           </div>
           <Modal open={openTodo}>
-            <div style={style} className="">
-
-              <TodoForm handleClose={handleOpenTodo} />
-            </div>
+                <TodoForm handleClose={handleOpenTodo} />
           </Modal>
 
           <Menu

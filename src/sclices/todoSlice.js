@@ -7,11 +7,9 @@ const newTodoRef = collection(firestore, "todos")
 
 export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (userId, { getState }) => {
   const uid = userId || getState().reducer.auth.user?.uid
-  console.log(uid)
   if (!uid) return;
 
   let userTodoQuery;
-  // const requiredDate=getState().reducer.filterTodo
   if (getState().reducer.todos.byOrder === 'priority') {
     userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
 
@@ -23,7 +21,6 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 
 
   const snapshot = await getDocs(userTodoQuery)
-  console.log(uid)
   if (snapshot.empty) {
     console.log("No matching todos.");
     return;
@@ -31,7 +28,7 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 
   let todos = [];
   snapshot?.forEach((doc) => {
-    todos.push(doc.data());
+    todos.push({ ...doc.data(), id: doc.id });
   });
 
   return todos;
@@ -39,12 +36,10 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 
 export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, { getState }) => {
 
-  console.log(props)
   const datestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
   const timestamp = props.dueTime ? firebase.firestore.Timestamp.fromDate(props.dueTime.$d) : null;
 
   const todoRef = firestore.collection('todos').doc();
-  console.log(timestamp)
   console.log(getState().reducer.auth.user?.uid)
   const res = await todoRef.set({
     title: props?.title,
@@ -56,7 +51,6 @@ export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, {
     userId: getState().reducer.auth.user?.uid,
     done: false
   });
-  console.log(res)
 });
 
 export const deleteFirebaseTodo = createAsyncThunk('todos/deleteTodo', async (id, { getState }) => {
@@ -64,10 +58,11 @@ export const deleteFirebaseTodo = createAsyncThunk('todos/deleteTodo', async (id
   const res = await todoRef.delete();
 })
 
-export const toggleFirebaseTodo= createAsyncThunk('todos/toggleTodo', async (id, { getState }) => {
-  const todoRef = firestore.collection('todos').doc(id);
+export const toggleFirebaseTodo = createAsyncThunk('todos/toggleTodo', async (prop, { getState }) => {
+  console.log(prop)
+  const todoRef = firestore.collection('todos').doc(prop.id);
   const res = await todoRef.update({
-    done: !getState().reducer.todos.todos.find((todo) => todo.id === id).done
+    done: prop.done
   });
 
 })
@@ -81,7 +76,7 @@ const todoSlice = createSlice({
     filterTodo: null,
     notFound: false,
     byOrder: 'priority',
-    requiredDate:'today'
+    requiredDate: 'today'
 
   }
   ,
@@ -127,6 +122,7 @@ const todoSlice = createSlice({
       })
       .addCase(fetchUserTodos.fulfilled, (state, action) => {
         state.status = 'succeeded';
+        console.log(action.payload)
         state.userTodos = action.payload;
       })
       .addCase(fetchUserTodos.rejected, (state, action) => {
@@ -140,8 +136,14 @@ const todoSlice = createSlice({
       .addCase(deleteFirebaseTodo.fulfilled, (state) => {
         state.status = 'idle';
       })
+      .addCase(toggleFirebaseTodo.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(toggleFirebaseTodo.fulfilled, (state) => {
         state.status = 'idle';
+      })
+      .addCase(toggleFirebaseTodo.rejected, (state) => {
+        console.log(state.error)
       })
   },
 });

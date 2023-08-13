@@ -1,12 +1,12 @@
-import { Checkbox, IconButton, Menu, MenuItem, SvgIcon } from '@mui/material'
+import { Checkbox, IconButton, SvgIcon } from '@mui/material'
 import React from 'react'
 import CheckCheckox from '../customIcons/CheckCheckox'
 import CheckedCheckox from '../customIcons/CheckedCheckBox'
 import dayjs from 'dayjs'
 import { mS } from '../../constants'
 import { useDispatch } from 'react-redux'
-import { deleteFirebaseTodo, fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
-import { DeleteOutline, Edit, MoreVert } from '@mui/icons-material'
+import { fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
+import { DeleteOutline } from '@mui/icons-material'
 
 const formatAMPM = (date) => {
     let hours = date.getHours();
@@ -21,7 +21,7 @@ const formatAMPM = (date) => {
 
     return strTime;
 };
-const DesignedTodoItems = ({ todo }) => {
+const DesignedCompletedTodoItems = ({ todo }) => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -30,8 +30,6 @@ const DesignedTodoItems = ({ todo }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
-
     const formatedDate = todo.dueDate ? todo.dueDate.toDate().getDate() + ' ' + mS[todo.dueDate.toDate().getMonth()] : null
     const formatedTime = todo.dueTime ? formatAMPM(todo.dueTime.toDate()) : null
 
@@ -41,31 +39,25 @@ const DesignedTodoItems = ({ todo }) => {
 
         dispatch(fetchUserTodos())
     }
-    const handleEdit = (id) => {
-        handleClose()
-    }
-    const handleDelete = async (id) => {
-        handleClose()
-        await dispatch(deleteFirebaseTodo(id))
-        dispatch(fetchUserTodos())
-    }
     return (
 
-        <div className={`rounded-2xl ${todo.priority === 1 ? 'bg-low' : todo.priority === 2 ? 'bg-medium' : todo.priority === 3 ? 'bg-high' : 'bg-gen '} min-h-[104px] shadow-todoItem flex items-start px-2 pb-4 pt-8 gap-x-2 justify-between relative`}>
+        <div className={`rounded-2xl ${todo.priority === 1 ? 'bg-low' : todo.priority === 2 ? 'bg-medium' : todo.priority === 3 ? 'bg-high' : 'bg-gen '} shadow-todoItem flex items-start px-2 min-h-[104px] pb-4 pt-8 gap-x-2 justify-between relative`}>
             <div className="flex gap-2">
 
                 <Checkbox icon={<CheckCheckox priority={todo.priority} />} checkedIcon={<CheckedCheckox priority={todo.priority} />} sx={{
                     color: 'transparent', '&.Mui-checked': {
                         color: 'transparent',
                     },
+
                 }}
-                    onChange={() => toggleTodo(todo.id)}
+                    defaultChecked
+                    onClick={() => toggleTodo(todo.id)}
                 />
                 <div className={`${(todo.priority === 3 || todo.priority === 0) ? 'text-white' : 'text-black'}  `}>
-                    <h3 className="text-lg font-bold leading-tight">
+                    <h3 className="text-lg font-bold leading-tight line-through">
                         {todo.title}
                     </h3>
-                    <h4 className="text-xs font-normal leading-tight">
+                    <h4 className="text-xs font-normal leading-tight line-through">
                         {todo.description}
                     </h4>
                 </div>
@@ -92,7 +84,7 @@ const DesignedTodoItems = ({ todo }) => {
 
             </div>
             <div className='absolute right-0 top-0'>
-                <div className='text-white' >
+                <div className={`${todo.priority === 3 || todo.priority === 0 ? 'text-white' : 'text-black'} `} >
 
                     <IconButton
                         aria-label="more"
@@ -103,60 +95,9 @@ const DesignedTodoItems = ({ todo }) => {
                         onClick={handleClick}
                         color='inherit'
                     >
-                        <MoreVert color='inherit' fontSize='small' />
+                        <DeleteOutline color='inherit' fontSize='small' />
                     </IconButton>
                 </div>
-                <Menu
-                    id="long-menu"
-                    MenuListProps={{
-                        'aria-labelledby': 'long-button',
-                    }}
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    PaperProps={{
-                        elevation: 0,
-                        sx: {
-                            overflow: 'visible',
-                            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                            mt: 1.5,
-                            px: 1,
-                            '& .MuiAvatar-root': {
-                                width: 32,
-                                height: 32,
-                                ml: -0.5,
-                                mr: 1,
-                            },
-                            '&:before': {
-                                content: '""',
-                                display: 'block',
-                                position: 'absolute',
-                                top: 0,
-                                right: 14,
-                                width: 10,
-                                height: 10,
-                                bgcolor: 'background.paper',
-                                transform: 'translateY(-50%) rotate(45deg)',
-                                zIndex: 0,
-                            },
-                        },
-                    }}
-                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                >
-                    <MenuItem onClick={() => { }}>
-
-                        <button className='flex items-center justify-center gap-x-2'>
-                            <Edit fontSize='small' /> Edit
-                        </button>
-                    </MenuItem>
-                    <MenuItem onClick={() => handleDelete(todo.id)}>
-
-                        <button className='flex items-center justify-center gap-x-2'>
-                            <DeleteOutline fontSize='small' /> Delete
-                        </button>
-                    </MenuItem>
-                </Menu>
             </div>
         </div>
 
@@ -164,4 +105,4 @@ const DesignedTodoItems = ({ todo }) => {
 
 }
 
-export default DesignedTodoItems
+export default DesignedCompletedTodoItems

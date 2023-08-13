@@ -13,6 +13,8 @@ import CompletedTodoItem from './customComponents/CompletedTodoItem'
 import TodoForm from './customComponents/TodoForm'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DesignedTodoItems from './customComponents/DesignedTodoItems'
+import { Backdrop, CircularProgress } from '@mui/material'
+import DesignedCompletedTodoItems from './customComponents/DesignedCompletedTodoItems'
 
 const TodoView = () => {
     const [currentTodo, setCurrentTodo] = useState({
@@ -25,6 +27,7 @@ const TodoView = () => {
     const inputRef = useRef(null)
     const divRef = useRef(null)
     const dispatch = useDispatch()
+    const state=useSelector(state=>state.reducer.todos.status)
     const todos = useSelector(state => state.reducer.todos.todos)
     const auth = useSelector(state => state.reducer.auth)
 
@@ -159,15 +162,15 @@ const TodoView = () => {
         key: '1',
         label: <h3 className="text-lg font-semibold">Completed Tasks</h3>,
         children:
-            <div className="grid gap-5">
+            <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 h-full overflow-y-auto no-scrollbar">
 
                 {completedTaskes?.map((todo) =>
-                    <CompletedTodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} clearCurTodo={clearCurTodo} />)}
+                    <DesignedCompletedTodoItems todo={todo} key={todo.id} />)}
             </div>
 
 
     }]
-
+    console.log(userTodos)
     return (
         <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
@@ -198,7 +201,7 @@ const TodoView = () => {
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : 9
                     </h3>
-                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] overflow-y-auto no-scrollbar">
+                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] h-full overflow-y-auto no-scrollbar">
                         {pendingTaskes?.map((todo) =>
                             <DesignedTodoItems todo={todo} key={todo.id} />
                         )
@@ -211,7 +214,12 @@ const TodoView = () => {
 
                     <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />
                 </> : <h3 className='text-lg font-semibold'>No Matching Todos</h3>}
-
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={state==='loading'}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
             </div>
 
         </div>
