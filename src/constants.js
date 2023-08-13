@@ -21,15 +21,15 @@ export const sortArray = [
 export const todoViewType = [
     {
         label: 'Today',
-        value: 0
+        value: 100
     },
     {
-        label: 'Week',
-        value: 1
+        label: 'Tommorow',
+        value: 101
     },
     {
         label: 'All',
-        value: 2
+        value: 102
     }
 ]
 export const priorityArray = [{ value: 0, label: 'General' }, { value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]

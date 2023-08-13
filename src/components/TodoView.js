@@ -2,7 +2,7 @@ import { CalculatorOutlined, CalendarFilled, CalendarOutlined, DeleteOutlined, E
 import { Checkbox, Collapse, DatePicker, Dropdown, Menu, Select, Tooltip, notification } from 'antd'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTodo, deleteTodo, editTodo, fetchUserTodos, toggleTodo } from '../sclices/todoSlice'
+import { addTodo, deleteTodo, editTodo, fetchUserTodos, toggleByOrder, toggleRequireData, toggleTodo } from '../sclices/todoSlice'
 import { motion } from 'framer-motion';
 import PriorityBox from './customComponents/PriorityBox'
 import DateBox from './customComponents/DateBox'
@@ -24,9 +24,9 @@ const TodoView = () => {
         dueDate: '',
     })
     const [activeKey, setActiveKey] = useState(null)
-    
+
     const dispatch = useDispatch()
-    const state=useSelector(state=>state.reducer.todos.status)
+    const state = useSelector(state => state.reducer.todos.status)
     const todos = useSelector(state => state.reducer.todos.todos)
     const auth = useSelector(state => state.reducer.auth)
 
@@ -34,7 +34,8 @@ const TodoView = () => {
     useEffect(() => {
         console.log("hi")
         if (auth?.user) {
-            dispatch(fetchUserTodos(auth.user.uid))
+
+            dispatch(fetchUserTodos({ userId: auth.user.uid }))
 
         }
     }, [auth?.user])
@@ -146,7 +147,7 @@ const TodoView = () => {
         key: '1',
         label: <h3 className="text-lg font-semibold">Completed Tasks</h3>,
         children:
-            <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 h-full overflow-y-auto no-scrollbar">
+            <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[200px] overflow-y-auto no-scrollbar">
 
                 {completedTaskes?.map((todo) =>
                     <DesignedCompletedTodoItems todo={todo} key={todo.id} />)}
@@ -154,6 +155,24 @@ const TodoView = () => {
 
 
     }]
+    const handleSortChange = (value) => {
+        console.log(value)
+        dispatch(
+            toggleByOrder(value)
+        )
+        dispatch(
+            fetchUserTodos()
+        )
+    }
+    const handleViewChange = (value) => {
+        console.log(value)
+        dispatch(
+            toggleRequireData(value)
+        )
+        dispatch(
+            fetchUserTodos()
+        )
+    }
     // console.log(userTodos)
     return (
         <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
@@ -173,8 +192,8 @@ const TodoView = () => {
                     </h1>
                 </div>
                 <div className=" flex gap-x-4 items-start lg:items-center">
-                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large" className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />} />
-                    <Select defaultValue={0} style={{ width: 120 }} options={todoViewType} size="large" suffixIcon={<KeyboardArrowDownIcon />} />
+                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large" className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />} onChange={(value) => handleSortChange(value)} />
+                    <Select defaultValue={100} style={{ width: 120 }} options={todoViewType} size="large" suffixIcon={<KeyboardArrowDownIcon />} onChange={(value) => handleViewChange(value)} />
 
                 </div>
             </div>
@@ -183,9 +202,9 @@ const TodoView = () => {
 
                 {!notFound ? <>
                     <h3 className="text-xl font-bold font-poppins uppercase">
-                        Pending Tasks : 9
+                        Pending Tasks : {pendingTaskes?.length ? pendingTaskes.length : 0}
                     </h3>
-                    <div className={"w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[58vh] h-full overflow-y-auto no-scrollbar "+ (pendingTaskes?.length/3 <= 3 ? 'grid-rows-3' : '')}>
+                    <div className={"w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[44vh] h-full overflow-y-auto no-scrollbar " + (pendingTaskes?.length / 3 <= 3 ? 'grid-rows-3' : '')}>
                         {pendingTaskes?.map((todo) =>
                             <DesignedTodoItems todo={todo} key={todo.id} />
                         )
@@ -200,7 +219,7 @@ const TodoView = () => {
                 </> : <h3 className='text-lg font-semibold'>No Matching Todos</h3>}
                 <Backdrop
                     sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={state==='loading'}
+                    open={state === 'loading'}
                 >
                     <CircularProgress color="inherit" />
                 </Backdrop>

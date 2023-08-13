@@ -2,23 +2,24 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { firestore, todosRef } from '../utils/Firebase';
 import { query, where, orderBy, getDocs, collection } from "firebase/firestore";
 import firebase from '../utils/Firebase';
+import dayjs from 'dayjs';
 
 const newTodoRef = collection(firestore, "todos")
 
-export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (userId, { getState }) => {
-  const uid = userId || getState().reducer.auth.user?.uid
+export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (props, { getState }) => {
+  const uid = props?.userId || getState().reducer.auth.user?.uid
   if (!uid) return;
 
   let userTodoQuery;
-  if (getState().reducer.todos.byOrder === 'priority') {
+  if (getState().reducer.todos.byOrder === 100) {
     const requiredDate = getState().reducer.todos.requiredDate
-    if (requiredDate === 'Today') {
+    if (requiredDate === 100) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", today), orderBy("priority", "desc"));
 
     }
-    else if (requiredDate === 'Tommorow') {
+    else if (requiredDate === 101) {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() + 1);
       startDate.setHours(0, 0, 0, 0)
@@ -28,15 +29,48 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
       console.log("hi")
 
     }
-    else if (requiredDate === 'All') {
+    else if (requiredDate === 102) {
       userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
 
     }
+    else {
+      const searchDate = new Date(requiredDate)
+      console.log(searchDate)
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", requiredDate), orderBy("priority", "desc"));
+    }
+
 
   }
   else {
 
-    userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("dueDate", "asc"));
+    const requiredDate = getState().reducer.todos.requiredDate
+    if (requiredDate === 100) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", today), orderBy("dueDate", "asc"));
+
+    }
+    else if (requiredDate === 101) {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() + 1);
+      startDate.setHours(0, 0, 0, 0)
+      console.log(startDate)
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", startDate), orderBy("dueDate", "asc"));
+
+      console.log("hi")
+
+    }
+    else if (requiredDate === 102) {
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("dueDate", "asc"));
+
+    }
+    else {
+      console.log(props)
+      console.log(requiredDate)
+      const searchDate = new Date(requiredDate)
+      console.log(searchDate)
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", requiredDate), orderBy("priority", "desc"));
+    }
   }
 
 
@@ -115,8 +149,8 @@ const todoSlice = createSlice({
     userTodos: [],
     filterTodo: null,
     notFound: false,
-    byOrder: 'priority',
-    requiredDate: 'All',
+    byOrder: 0,
+    requiredDate: 100,
     error: ''
 
   }

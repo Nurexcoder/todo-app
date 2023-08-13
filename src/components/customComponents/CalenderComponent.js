@@ -11,7 +11,7 @@ import { Modal } from '@mui/material';
 import TodoForm from './TodoForm';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addTodo } from '../../sclices/todoSlice';
+import { addTodo, fetchUserTodos, toggleRequireData } from '../../sclices/todoSlice';
 import { mS } from '../../constants';
 
 function getRandomNumber(min, max) {
@@ -38,24 +38,8 @@ function fakeFetch(date, { signal }) {
     });
 }
 
-const initialValue = dayjs('2022-04-17');
+const initialValue = dayjs(new Date());
 
-function ServerDay(props) {
-    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
-    const isSelected =
-        !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-
-    return (
-        <div className="relative ">
-
-            <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
-            {/* <span className='absolute left-[40%] top-[50%] translate-x-1/2 -translate-y-1/2 text-red-900 text-2xl font-bold'>
-                .
-            </span> */}
-        </div>
-    );
-}
 
 export default function DateCalendarServerRequest() {
     const requestAbortController = React.useRef(null);
@@ -63,59 +47,7 @@ export default function DateCalendarServerRequest() {
     const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [currentTodo, setCurrentTodo] = React.useState({
-        title: '',
-        description: '',
-        priority: 0,
-        dueDate: '',
-    })
 
-    const handleChange = (e) => {
-        setCurrentTodo({
-            ...currentTodo,
-            [e.target.name]: e.target.value,
-        });
-    }
-    const clearCurTodo = () => {
-        setCurrentTodo({
-            title: '',
-            description: '',
-            priority: 0,
-            dueDate: '',
-        });
-    }
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-
-        if (currentTodo.title) {
-
-            const formatedDate = currentTodo.dueDate ? currentTodo.dueDate?.$D + ' ' + mS[currentTodo.dueDate.$M] : ''
-            const tempCurrentTodo = { ...currentTodo }
-            tempCurrentTodo.dueDate = formatedDate
-
-
-            dispatch(
-                addTodo({
-                    id: Date.now(),
-                    title: currentTodo.title,
-                    description: currentTodo.description,
-                    priority: currentTodo.priority,
-                    dueDate: formatedDate,
-                    done: false,
-                })
-            );
-            setCurrentTodo({
-                title: '',
-                description: '',
-                priority: 0,
-                dueDate: '',
-            });
-            navigate('/')
-        }
-    };
     const fetchHighlightedDays = (date) => {
         const controller = new AbortController();
         fakeFetch(date, {
@@ -152,6 +84,28 @@ export default function DateCalendarServerRequest() {
         setHighlightedDays([]);
         fetchHighlightedDays(date);
     };
+
+    const handleDateClick = (date) => {
+        dispatch(toggleRequireData(date.$d))
+        dispatch(fetchUserTodos());
+    }
+
+    function ServerDay(props) {
+        const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+
+        const isSelected =
+            !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
+
+        return (
+            <div onClick={(date) => handleDateClick(day)} className="relative ">
+
+                <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+                {/* <span className='absolute left-[40%] top-[50%] translate-x-1/2 -translate-y-1/2 text-red-900 text-2xl font-bold'>
+                    .
+                </span> */}
+            </div>
+        );
+    }
 
     return (
         <div className='bg-secondary  w-full rounded-xl'>
