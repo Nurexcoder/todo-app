@@ -28,24 +28,22 @@ const TodoView = () => {
     const todos = useSelector(state => state.reducer.todos.todos)
     const auth = useSelector(state => state.reducer.auth)
 
-    const userTodos=useSelector(state=>state.reducer.todos.userTodos)
-    console.log(userTodos)
+    const userTodos = useSelector(state => state.reducer.todos.userTodos)
     useEffect(() => {
         console.log("hi")
-        if(auth?.user){
+        if (auth?.user) {
             dispatch(fetchUserTodos(auth.user.uid))
 
         }
-    },[auth?.user])
+    }, [auth?.user])
 
     const notFound = useSelector(state => state.reducer.todos.notFound)
 
-    const completedTaskes = todos.filter((item) => item.done)
+    const completedTaskes = userTodos?.filter((item) => item.done)
 
-    const pendingTaskes = todos.filter((item) => !item.done)
+    const pendingTaskes = userTodos?.filter((item) => !item.done)
 
     //filter the not completed task by priority
-    pendingTaskes.sort((a, b) => (b.priority - a.priority))
 
     const handleEdit = (id) => {
 
@@ -188,9 +186,9 @@ const TodoView = () => {
                     </h1>
                 </div>
                 <div className=" flex gap-x-4 items-start lg:items-center">
-                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large"  className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />}/>
-                    <Select defaultValue={0} style={{ width: 120 }} options={todoViewType} size="large"  suffixIcon={<KeyboardArrowDownIcon />} />
-                    
+                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large" className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />} />
+                    <Select defaultValue={0} style={{ width: 120 }} options={todoViewType} size="large" suffixIcon={<KeyboardArrowDownIcon />} />
+
                 </div>
             </div>
 
@@ -200,15 +198,15 @@ const TodoView = () => {
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : 9
                     </h3>
-                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2">
-                        {/* {pendingTaskes?.map((todo) =>
-                            <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} />
+                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] overflow-y-auto no-scrollbar">
+                        {pendingTaskes?.map((todo) =>
+                            <DesignedTodoItems todo={todo} key={todo.id} />
                         )
-                        } */}
-                        <DesignedTodoItems priority={0}/>
-                        <DesignedTodoItems priority={1}/>
-                        <DesignedTodoItems priority={2}/>
-                        <DesignedTodoItems priority={3}/>
+                        }
+                        {/* <TodoItem todo={todo} key={todo.id} dropdownItems={dropdownItems} /> */}
+                        {/* <DesignedTodoItems priority={1} />
+                        <DesignedTodoItems priority={2} />
+                        <DesignedTodoItems priority={3} /> */}
                     </div>
 
                     <Collapse ghost expandIconPosition={'end'} items={completedItems} accordion={true} />

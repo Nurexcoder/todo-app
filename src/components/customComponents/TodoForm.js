@@ -5,8 +5,8 @@ import { mS, todoVariants } from '../../constants'
 import DateBox from './DateBox'
 import PriorityBox from './PriorityBox'
 import dayjs from 'dayjs'
-import { useDispatch } from 'react-redux'
-import { addTodoFirebase } from '../../sclices/todoSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { addTodoFirebase, fetchUserTodos } from '../../sclices/todoSlice'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -16,6 +16,8 @@ import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@
 
 const priorityArray = [{ value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]
 const TodoForm = ({ handleClose }) => {
+
+    const auth=useSelector(state=>state.reducers?.auth?.user)
     const [currentTodo, setCurrentTodo] = React.useState({
         title: '',
         description: '',
@@ -61,6 +63,9 @@ const TodoForm = ({ handleClose }) => {
                     done: false,
                 })
             );
+            dispatch(
+                fetchUserTodos(auth?.uid)
+            )
             setCurrentTodo({
                 title: '',
                 description: '',

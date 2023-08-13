@@ -3,8 +3,12 @@ import { firestore, todosRef } from '../utils/Firebase';
 import firebase from '../utils/Firebase';
 
 
-export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (user, { getState }) => {
-  const snapshot = await todosRef.where("userId", "==", user).get();
+export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (userId, { getState }) => {
+  const uid = userId || getState().reducer.auth.user?.uid
+  if (!uid) return;
+  const query = todosRef.where("userId", "==", uid).orderBy('priority', 'asc');
+  const snapshot = await query.get()
+  console.log(uid)
   if (snapshot.empty) {
     console.log("No matching todos.");
     return;
@@ -33,7 +37,7 @@ export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, {
     createdAt: new Date(),
     dueDate: timestamp,
     userId: getState().reducer.auth.user?.uid,
-    done:false
+    done: false
   });
   console.log(res)
 });

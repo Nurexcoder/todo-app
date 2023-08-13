@@ -154,7 +154,7 @@ export default function DateCalendarServerRequest() {
     };
 
     return (
-        <div className='bg-secondary shadow-lg w-full rounded-xl'>
+        <div className='bg-secondary  w-full rounded-xl'>
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateCalendar
