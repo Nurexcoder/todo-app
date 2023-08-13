@@ -11,7 +11,27 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 
   let userTodoQuery;
   if (getState().reducer.todos.byOrder === 'priority') {
-    userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
+    const requiredDate = getState().reducer.todos.requiredDate
+    if (requiredDate === 'Today') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", today), orderBy("priority", "desc"));
+
+    }
+    else if (requiredDate === 'Tommorow') {
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() + 1);
+      startDate.setHours(0, 0, 0, 0)
+      console.log(startDate)
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), where("dueDate", "==", startDate), orderBy("priority", "desc"));
+
+      console.log("hi")
+
+    }
+    else if (requiredDate === 'All') {
+      userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
+
+    }
 
   }
   else {
@@ -36,6 +56,7 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (us
 
 export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, { getState }) => {
 
+  console.log(props.dueDate.$d)
   const datestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
   const timestamp = props.dueTime ? firebase.firestore.Timestamp.fromDate(props.dueTime.$d) : null;
 
@@ -68,12 +89,12 @@ export const toggleFirebaseTodo = createAsyncThunk('todos/toggleTodo', async (pr
 export const editFirebaseTodo = createAsyncThunk('todos/editTodo', async (props, { getState }) => {
   const datestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
   const timestamp = props.dueTime ? firebase.firestore.Timestamp.fromDate(props.dueTime.$d) : null;
-  
+
   try {
-    
+
     const todoRef = firestore.collection('todos').doc(props.id);
     console.log(props)
-  
+
     const res = await todoRef.update({
       title: props.title,
       description: props.description,
@@ -95,7 +116,8 @@ const todoSlice = createSlice({
     filterTodo: null,
     notFound: false,
     byOrder: 'priority',
-    requiredDate: 'today'
+    requiredDate: 'All',
+    error: ''
 
   }
   ,
@@ -132,6 +154,13 @@ const todoSlice = createSlice({
         state.notFound = false
       }
     }
+    ,
+    toggleRequireData: (state, action) => {
+      state.requiredDate = action.payload
+    },
+    toggleByOrder: (state, action) => {
+      state.byOrder = action.payload
+    }
 
   },
   extraReducers: (builder) => {
@@ -145,8 +174,8 @@ const todoSlice = createSlice({
       })
       .addCase(fetchUserTodos.rejected, (state, action) => {
         state.status = 'failed';
-        console.log(state.error)
         state.error = action.error.message;
+        // console.log(state.error)
       })
       .addCase(addTodoFirebase.pending, (state) => {
         state.status = 'Aloading';
@@ -178,5 +207,5 @@ const todoSlice = createSlice({
   },
 });
 
-export const { addTodo, toggleTodo, deleteTodo, editTodo, searchTodo } = todoSlice.actions;
+export const { addTodo, toggleTodo, deleteTodo, editTodo, searchTodo, toggleRequireData, toggleByOrder } = todoSlice.actions;
 export default todoSlice.reducer;

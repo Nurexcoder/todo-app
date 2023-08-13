@@ -154,6 +154,7 @@ const TodoView = () => {
 
 
     }]
+    // console.log(userTodos)
     return (
         <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
@@ -184,7 +185,7 @@ const TodoView = () => {
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : 9
                     </h3>
-                    <div className="w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] h-full overflow-y-auto no-scrollbar">
+                    <div className={"w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[58vh] h-full overflow-y-auto no-scrollbar "+ (pendingTaskes?.length/3 <= 3 ? 'grid-rows-3' : '')}>
                         {pendingTaskes?.map((todo) =>
                             <DesignedTodoItems todo={todo} key={todo.id} />
                         )

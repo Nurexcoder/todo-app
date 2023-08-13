@@ -169,6 +169,7 @@ const DesignedTodoItems = ({ todo }) => {
             <Modal open={modalOpen} onClose={handleModalClose}>
                 <TodoForm todoData={todo} handleClose={handleModalClose} />
             </Modal>
+            
         </div>
 
     )

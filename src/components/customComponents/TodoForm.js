@@ -34,14 +34,14 @@ const TodoForm = ({ handleClose, todoData }) => {
         title: todoData.title,
         description: todoData.description,
         priority: todoData.priority,
-        dueDate: todoData.dueDate ? dayjs(todoData.dueDate.toDate()) : '',
-        dueTime: todoData.dueTime ? dayjs(todoData.dueTime.toDate()) : '',
+        dueDate: todoData.dueDate ? dayjs(todoData.dueDate.toDate()) : undefined,
+        dueTime: todoData.dueTime ? dayjs(todoData.dueTime.toDate()) : undefined,
     } : {
         title: '',
         description: '',
         priority: 0,
-        dueDate: '',
-        dueTime: '',
+        dueDate: undefined,
+        dueTime: undefined,
     })
     console.log(currentTodo)
     // if(todoData){
