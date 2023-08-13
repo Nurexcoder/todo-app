@@ -1,5 +1,5 @@
-import { Checkbox, IconButton, Menu, MenuItem, SvgIcon } from '@mui/material'
-import React from 'react'
+import { Checkbox, IconButton, Menu, MenuItem, Modal, SvgIcon } from '@mui/material'
+import React, { useState } from 'react'
 import CheckCheckox from '../customIcons/CheckCheckox'
 import CheckedCheckox from '../customIcons/CheckedCheckBox'
 import dayjs from 'dayjs'
@@ -7,6 +7,7 @@ import { mS } from '../../constants'
 import { useDispatch } from 'react-redux'
 import { deleteFirebaseTodo, fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
 import { DeleteOutline, Edit, MoreVert } from '@mui/icons-material'
+import TodoForm from './TodoForm'
 
 const formatAMPM = (date) => {
     let hours = date.getHours();
@@ -30,7 +31,13 @@ const DesignedTodoItems = ({ todo }) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const [modalOpen, setModalOpen] = useState(false)
+    const handleModalOpen = () => {
+        setModalOpen(true)
+    }
+    const handleModalClose = () => {
+        setModalOpen(false)
+    }
 
     const formatedDate = todo.dueDate ? todo.dueDate.toDate().getDate() + ' ' + mS[todo.dueDate.toDate().getMonth()] : null
     const formatedTime = todo.dueTime ? formatAMPM(todo.dueTime.toDate()) : null
@@ -42,6 +49,7 @@ const DesignedTodoItems = ({ todo }) => {
         dispatch(fetchUserTodos())
     }
     const handleEdit = (id) => {
+        setModalOpen(true)
         handleClose()
     }
     const handleDelete = async (id) => {
@@ -92,7 +100,7 @@ const DesignedTodoItems = ({ todo }) => {
 
             </div>
             <div className='absolute right-0 top-0'>
-                <div className='text-white' >
+                <div className={`${todo.priority === 3 || todo.priority === 0 ? 'text-white' : 'text-black'} `} >
 
                     <IconButton
                         aria-label="more"
@@ -144,9 +152,9 @@ const DesignedTodoItems = ({ todo }) => {
                     transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                     anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
-                    <MenuItem onClick={() => { }}>
+                    <MenuItem onClick={handleEdit}>
 
-                        <button className='flex items-center justify-center gap-x-2'>
+                        <button  className='flex items-center justify-center gap-x-2'>
                             <Edit fontSize='small' /> Edit
                         </button>
                     </MenuItem>
@@ -158,6 +166,9 @@ const DesignedTodoItems = ({ todo }) => {
                     </MenuItem>
                 </Menu>
             </div>
+            <Modal open={modalOpen} onClose={handleModalClose}>
+                <TodoForm todoData={todo} handleClose={handleModalClose} />
+            </Modal>
         </div>
 
     )

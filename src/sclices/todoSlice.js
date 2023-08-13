@@ -45,7 +45,6 @@ export const addTodoFirebase = createAsyncThunk('todos/addTodo', async (props, {
     title: props?.title,
     description: props?.description,
     priority: props?.priority,
-    createdAt: new Date(),
     dueDate: datestamp,
     dueTime: timestamp,
     userId: getState().reducer.auth.user?.uid,
@@ -59,12 +58,32 @@ export const deleteFirebaseTodo = createAsyncThunk('todos/deleteTodo', async (id
 })
 
 export const toggleFirebaseTodo = createAsyncThunk('todos/toggleTodo', async (prop, { getState }) => {
-  console.log(prop)
   const todoRef = firestore.collection('todos').doc(prop.id);
   const res = await todoRef.update({
     done: prop.done
   });
 
+})
+
+export const editFirebaseTodo = createAsyncThunk('todos/editTodo', async (props, { getState }) => {
+  const datestamp = props.dueDate ? firebase.firestore.Timestamp.fromDate(props.dueDate.$d) : null;
+  const timestamp = props.dueTime ? firebase.firestore.Timestamp.fromDate(props.dueTime.$d) : null;
+  
+  try {
+    
+    const todoRef = firestore.collection('todos').doc(props.id);
+    console.log(props)
+  
+    const res = await todoRef.update({
+      title: props.title,
+      description: props.description,
+      priority: props.priority,
+      dueDate: datestamp,
+      dueTime: timestamp,
+    });
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 const todoSlice = createSlice({
@@ -122,13 +141,15 @@ const todoSlice = createSlice({
       })
       .addCase(fetchUserTodos.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        console.log(action.payload)
         state.userTodos = action.payload;
       })
       .addCase(fetchUserTodos.rejected, (state, action) => {
         state.status = 'failed';
         console.log(state.error)
         state.error = action.error.message;
+      })
+      .addCase(addTodoFirebase.pending, (state) => {
+        state.status = 'Aloading';
       })
       .addCase(addTodoFirebase.fulfilled, (state) => {
         state.status = 'idle';
@@ -144,6 +165,15 @@ const todoSlice = createSlice({
       })
       .addCase(toggleFirebaseTodo.rejected, (state) => {
         console.log(state.error)
+      })
+      .addCase(editFirebaseTodo.pending, (state) => {
+        state.status = 'Aloading';
+      })
+      .addCase(editFirebaseTodo.fulfilled, (state) => {
+        state.status = 'idle';
+      })
+      .addCase(editFirebaseTodo.rejected, (state) => {
+        console.log(state)
       })
   },
 });

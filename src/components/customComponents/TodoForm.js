@@ -6,12 +6,12 @@ import DateBox from './DateBox'
 import PriorityBox from './PriorityBox'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTodoFirebase, fetchUserTodos } from '../../sclices/todoSlice'
+import { addTodoFirebase, editFirebaseTodo, fetchUserTodos } from '../../sclices/todoSlice'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@mui/material'
+import { Backdrop, CircularProgress, FormControl, InputLabel, MenuItem, Select, TextField, Tooltip } from '@mui/material'
 import { TimePicker } from '@mui/x-date-pickers'
 
 
@@ -26,18 +26,30 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-const TodoForm = ({ handleClose }) => {
+const TodoForm = ({ handleClose, todoData }) => {
 
     const auth = useSelector(state => state.reducers?.auth?.user)
-    const [currentTodo, setCurrentTodo] = React.useState({
+    const [currentTodo, setCurrentTodo] = React.useState(todoData ? {
+        id: todoData.id,
+        title: todoData.title,
+        description: todoData.description,
+        priority: todoData.priority,
+        dueDate: todoData.dueDate ? dayjs(todoData.dueDate.toDate()) : '',
+        dueTime: todoData.dueTime ? dayjs(todoData.dueTime.toDate()) : '',
+    } : {
         title: '',
         description: '',
         priority: 0,
         dueDate: '',
-        dueTime:'',
+        dueTime: '',
     })
+    console.log(currentTodo)
+    // if(todoData){
+    //     setCurrentTodo(todoData)    
+    // }
     const dispatch = useDispatch()
-
+    
+    const state=useSelector(state=>state.reducer.todos.status)
     const handleChange = (e) => {
         setCurrentTodo({
             ...currentTodo,
@@ -65,17 +77,36 @@ const TodoForm = ({ handleClose }) => {
             // tempCurrentTodo.dueDate = formatedDate
 
             console.log(tempCurrentTodo)
-            dispatch(
-                addTodoFirebase({
-                    id: Date.now(),
-                    title: currentTodo.title,
-                    description: currentTodo.description,
-                    priority: currentTodo.priority,
-                    dueDate: currentTodo.dueDate,
-                    dueTime: currentTodo.dueTime,
-                    done: false,
-                })
-            );
+            if (!currentTodo.id) {
+
+                await dispatch(
+                    addTodoFirebase({
+                        id: Date.now(),
+                        title: currentTodo.title,
+                        description: currentTodo.description,
+                        priority: currentTodo.priority,
+                        dueDate: currentTodo.dueDate,
+                        dueTime: currentTodo.dueTime,
+                        done: false,
+                    })
+                );
+            }
+            else {
+
+                await dispatch(
+                    editFirebaseTodo(
+                        {
+                            id: currentTodo.id,
+                            title: currentTodo.title,
+                            description: currentTodo.description,
+                            priority: currentTodo.priority,
+                            dueDate: currentTodo.dueDate,
+                            dueTime: currentTodo.dueTime,
+                            done: false,
+                        }
+                    )
+                )
+            }
             dispatch(
                 fetchUserTodos(auth?.uid)
             )
@@ -94,9 +125,9 @@ const TodoForm = ({ handleClose }) => {
     return (
         <div style={style} className="">
             <form className="flex w-full items-start gap-x-4 gap-y-4 bg-white p-4 lg:p-8 rounded-md  flex-col " onSubmit={handleSubmit} >
-            <h1 className="text-2xl font-semibold">
-                Add Todo
-            </h1>
+                <h1 className="text-2xl font-semibold">
+                    Add Todo
+                </h1>
                 {/* <Checkbox className='py-1' /> */}
 
                 <div className="grid gap-y-4 w-full group/todobox">
@@ -115,7 +146,7 @@ const TodoForm = ({ handleClose }) => {
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     {/* <DatePicker value={currentTodo.dueDate} className='z-50' onChange={(value) => setCurrentTodo({ ...currentTodo, dueDate: value })} disabledDate={disabledDate} /> */}
                                     <DemoContainer components={['DatePicker']}>
-                                        <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} onChange={(date) => setCurrentTodo({ ...currentTodo, dueDate: date })} />
+                                        <DatePicker label="Due Date" slotProps={{ textField: { size: 'small' } }} value={currentTodo.dueDate} onChange={(date) => setCurrentTodo({ ...currentTodo, dueDate: date })} />
                                     </DemoContainer>
                                 </LocalizationProvider>
                             </div>
@@ -146,7 +177,7 @@ const TodoForm = ({ handleClose }) => {
 
                                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DemoContainer components={['TimePicker']}>
-                                        <TimePicker label="Due Time" slotProps={{ textField: { size: 'small' } }} onChange={(time) => setCurrentTodo({ ...currentTodo, dueTime: time })} />
+                                        <TimePicker label="Due Time" slotProps={{ textField: { size: 'small' } }} value={currentTodo.dueTime} onChange={(time) => setCurrentTodo({ ...currentTodo, dueTime: time })} />
                                     </DemoContainer>
                                 </LocalizationProvider>
                             </div>
@@ -158,6 +189,12 @@ const TodoForm = ({ handleClose }) => {
                     </div>
                 </div>
             </form>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={state === 'Aloading'}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </div>
     )
 }

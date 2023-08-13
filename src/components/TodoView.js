@@ -24,8 +24,7 @@ const TodoView = () => {
         dueDate: '',
     })
     const [activeKey, setActiveKey] = useState(null)
-    const inputRef = useRef(null)
-    const divRef = useRef(null)
+    
     const dispatch = useDispatch()
     const state=useSelector(state=>state.reducer.todos.status)
     const todos = useSelector(state => state.reducer.todos.todos)
@@ -56,8 +55,6 @@ const TodoView = () => {
         setActiveKey('1')
         setCurrentTodo(editableTodo)
 
-        inputRef.current?.scrollIntoView({ behavior: 'smooth' });
-        inputRef.current?.focus();
 
     }
     const clearCurTodo = () => {
@@ -142,19 +139,6 @@ const TodoView = () => {
     )
 
 
-    // const addItemsMenu = [
-    //     {
-    //         key: '1',
-    //         label: <h3 className=" font-semibold">
-    //             {currentTodo.id ? 'Edit Todo' : 'Add Todo'}
-    //         </h3>,
-
-    //         children: <TodoForm handleSubmit={handleSubmit} handleChange={handleChange}
-    //             currentTodo={currentTodo} setCurrentTodo={setCurrentTodo} inputRef={inputRef}
-    //             clearCurTodo={clearCurTodo} />
-
-    //     },
-    // ]
 
 
 
@@ -170,7 +154,6 @@ const TodoView = () => {
 
 
     }]
-    console.log(userTodos)
     return (
         <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
 
@@ -201,7 +184,7 @@ const TodoView = () => {
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : 9
                     </h3>
-                    <div className="w-full grid items-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] h-full overflow-y-auto no-scrollbar">
+                    <div className="w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[50vh] h-full overflow-y-auto no-scrollbar">
                         {pendingTaskes?.map((todo) =>
                             <DesignedTodoItems todo={todo} key={todo.id} />
                         )
