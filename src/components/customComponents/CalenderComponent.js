@@ -9,7 +9,7 @@ import { DayCalendarSkeleton } from '@mui/x-date-pickers/DayCalendarSkeleton';
 import { DotChartOutlined } from '@ant-design/icons';
 import { Modal } from '@mui/material';
 import TodoForm from './TodoForm';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addTodo, fetchUserTodos, toggleRequireData } from '../../sclices/todoSlice';
 import { mS } from '../../constants';
@@ -47,6 +47,9 @@ export default function DateCalendarServerRequest() {
     const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
+    const allTodos = useSelector(state => state.reducer.todos.allTodos)
+    console.log(allTodos)
 
     const fetchHighlightedDays = (date) => {
         const controller = new AbortController();
@@ -96,6 +99,7 @@ export default function DateCalendarServerRequest() {
         const isSelected =
             !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
 
+      
         return (
             <div onClick={(date) => handleDateClick(day)} className="relative ">
 
@@ -106,6 +110,8 @@ export default function DateCalendarServerRequest() {
             </div>
         );
     }
+
+
 
     return (
         <div className='bg-secondary  w-full rounded-xl'>

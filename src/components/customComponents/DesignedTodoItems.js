@@ -5,7 +5,7 @@ import CheckedCheckox from '../customIcons/CheckedCheckBox'
 import dayjs from 'dayjs'
 import { mS } from '../../constants'
 import { useDispatch } from 'react-redux'
-import { deleteFirebaseTodo, fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
+import { deleteFirebaseTodo, fetchAllTodos, fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
 import { DeleteOutline, Edit, MoreVert } from '@mui/icons-material'
 import TodoForm from './TodoForm'
 
@@ -47,6 +47,7 @@ const DesignedTodoItems = ({ todo }) => {
         await dispatch(toggleFirebaseTodo({ id: id, done: !todo.done }))
 
         dispatch(fetchUserTodos())
+        dispatch(fetchAllTodos())
     }
     const handleEdit = (id) => {
         setModalOpen(true)
@@ -56,6 +57,7 @@ const DesignedTodoItems = ({ todo }) => {
         handleClose()
         await dispatch(deleteFirebaseTodo(id))
         dispatch(fetchUserTodos())
+        dispatch(fetchAllTodos())
     }
     return (
 

@@ -9,7 +9,7 @@ const MainPage = () => {
   return (
     <div className="h-screen overflow-y-scroll flex flex-col items-center gap-5  relative">
       <Navbar />
-      <div className="grid grid-cols-12 w-full justify-center items-start  max-w-[1440px] h-full mx-auto p-2 gap-x-6 ">
+      <div className="grid grid-cols-mainBody w-full justify-center items-start  max-w-[1440px] h-full mx-auto p-2 gap-x-6 ">
         <SideBar/>
 
         <TodoView />

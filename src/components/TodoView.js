@@ -2,7 +2,7 @@ import { CalculatorOutlined, CalendarFilled, CalendarOutlined, DeleteOutlined, E
 import { Checkbox, Collapse, DatePicker, Dropdown, Menu, Select, Tooltip, notification } from 'antd'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTodo, deleteTodo, editTodo, fetchUserTodos, toggleByOrder, toggleRequireData, toggleTodo } from '../sclices/todoSlice'
+import { addTodo, deleteTodo, editTodo, fetchAllTodos, fetchUserTodos, toggleByOrder, toggleRequireData, toggleTodo } from '../sclices/todoSlice'
 import { motion } from 'framer-motion';
 import PriorityBox from './customComponents/PriorityBox'
 import DateBox from './customComponents/DateBox'
@@ -36,6 +36,7 @@ const TodoView = () => {
         if (auth?.user) {
 
             dispatch(fetchUserTodos({ userId: auth.user.uid }))
+            dispatch(fetchAllTodos())
 
         }
     }, [auth?.user])
@@ -174,8 +175,9 @@ const TodoView = () => {
         )
     }
     // console.log(userTodos)
+    // col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9
     return (
-        <div className='flex flex-col w-full md:w-full mx-auto   shadow-sm gap-5 mb-10 col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9 h-full rounded-3xl bg-primary p-5' >
+        <div className='flex flex-col w-full md:w-full mx-auto col-span-2 md:col-span-1   shadow-sm gap-5 mb-10  h-full rounded-3xl bg-primary p-5' >
 
             <div className="flex lg:justify-between gap-y-5 lg:items-center flex-col lg:flex-row">
                 <div className="flex lg:items-center  gap-x-3 lg:justify-center flex-row">
@@ -204,7 +206,7 @@ const TodoView = () => {
                     <h3 className="text-xl font-bold font-poppins uppercase">
                         Pending Tasks : {pendingTaskes?.length ? pendingTaskes.length : 0}
                     </h3>
-                    <div className={"w-full grid items-start justify-start md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[44vh] h-full overflow-y-auto no-scrollbar " + (pendingTaskes?.length / 3 <= 3 ? 'grid-rows-3' : '')}>
+                    <div className={"w-full grid items-start justify-start grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-5 min-h-[10rem] px-2 max-h-[44vh] h-full overflow-y-auto no-scrollbar " + (pendingTaskes?.length / 3 <= 3 ? 'lg:grid-rows-3' : '')}>
                         {pendingTaskes?.map((todo) =>
                             <DesignedTodoItems todo={todo} key={todo.id} />
                         )

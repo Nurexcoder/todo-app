@@ -5,7 +5,7 @@ import CheckedCheckox from '../customIcons/CheckedCheckBox'
 import dayjs from 'dayjs'
 import { mS } from '../../constants'
 import { useDispatch } from 'react-redux'
-import { fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
+import { fetchAllTodos, fetchUserTodos, toggleFirebaseTodo } from '../../sclices/todoSlice'
 import { DeleteOutline } from '@mui/icons-material'
 
 const formatAMPM = (date) => {
@@ -38,6 +38,7 @@ const DesignedCompletedTodoItems = ({ todo }) => {
         await dispatch(toggleFirebaseTodo({ id: id, done: !todo.done }))
 
         dispatch(fetchUserTodos())
+        dispatch(fetchAllTodos())
     }
     return (
 

@@ -11,10 +11,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<MainPage />} />
+        <Route path='/home' element={<MainPage />} />
         <Route path='/add' element={<AddTodoPage />} />
         <Route path='/login' element={<LoginPage />} />
-        <Route path='/landing' element={<div><TryPremiumModal /></div>} />
+        <Route path='/' element={<LandingPage />} />
       </Routes>
 
     </BrowserRouter>

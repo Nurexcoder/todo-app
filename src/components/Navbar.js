@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { GoogleCircleFilled, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { Input, Space } from 'antd';
 import { useDispatch } from 'react-redux';
-import { addTodo, addTodoFirebase, fetchUserTodos, searchTodo } from '../sclices/todoSlice';
+import { addTodo, addTodoFirebase, fetchAllTodos, fetchUserTodos, searchTodo } from '../sclices/todoSlice';
 import { auth } from '../utils/Firebase';
 import { Avatar, Divider, ListItemIcon, Menu, MenuItem, Modal } from '@mui/material';
 import { Add, Logout } from '@mui/icons-material';
@@ -42,6 +42,7 @@ const Navbar = () => {
 
   useEffect(() => {
     dispatch(fetchUserTodos())
+    dispatch(fetchAllTodos())
   }, [user])
   return (
     <div className='flex w-full shadow-md bg-white h-max top-0 sticky z-50'>
@@ -65,7 +66,7 @@ const Navbar = () => {
               Add Todo
             </span>
           </button>
-          <div className="">
+          <div className="md:hidden">
 
             {
               !user ?
@@ -77,7 +78,7 @@ const Navbar = () => {
             }
           </div>
           <Modal open={openTodo}>
-                <TodoForm handleClose={handleOpenTodo} />
+            <TodoForm handleClose={handleOpenTodo} />
           </Modal>
 
           <Menu

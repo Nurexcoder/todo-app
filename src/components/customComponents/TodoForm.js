@@ -6,7 +6,7 @@ import DateBox from './DateBox'
 import PriorityBox from './PriorityBox'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTodoFirebase, editFirebaseTodo, fetchUserTodos } from '../../sclices/todoSlice'
+import { addTodoFirebase, editFirebaseTodo, fetchAllTodos, fetchUserTodos } from '../../sclices/todoSlice'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -48,8 +48,8 @@ const TodoForm = ({ handleClose, todoData }) => {
     //     setCurrentTodo(todoData)    
     // }
     const dispatch = useDispatch()
-    
-    const state=useSelector(state=>state.reducer.todos.status)
+
+    const state = useSelector(state => state.reducer.todos.status)
     const handleChange = (e) => {
         setCurrentTodo({
             ...currentTodo,
@@ -110,6 +110,7 @@ const TodoForm = ({ handleClose, todoData }) => {
             dispatch(
                 fetchUserTodos(auth?.uid)
             )
+            dispatch(fetchAllTodos())
             setCurrentTodo({
                 title: '',
                 description: '',

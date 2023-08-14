@@ -11,7 +11,7 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (pr
   if (!uid) return;
 
   let userTodoQuery;
-  if (getState().reducer.todos.byOrder === 100) {
+  if (getState().reducer.todos.byOrder === 0) {
     const requiredDate = getState().reducer.todos.requiredDate
     if (requiredDate === 100) {
       const today = new Date();
@@ -31,6 +31,7 @@ export const fetchUserTodos = createAsyncThunk('todos/fetchUserTodos', async (pr
     }
     else if (requiredDate === 102) {
       userTodoQuery = query(newTodoRef, where("userId", "==", uid), orderBy("priority", "desc"));
+      console.log("Hi")
 
     }
     else {
@@ -141,6 +142,26 @@ export const editFirebaseTodo = createAsyncThunk('todos/editTodo', async (props,
   }
 })
 
+export const fetchAllTodos = createAsyncThunk('todos/fetchAllTodos', async (props, { getState }) => {
+
+  const uid = props?.userId || getState().reducer.auth.user?.uid
+  if (!uid) return;
+  const userTodoQuery = query(newTodoRef, where("userId", "==", uid));
+
+  const snapshot = await getDocs(userTodoQuery)
+  if (snapshot.empty) {
+    console.log("No matching todos.");
+    return;
+  }
+
+  let todos = [];
+  snapshot?.forEach((doc) => {
+    todos.push({ ...doc.data(), id: doc.id });
+  });
+
+  return todos;
+})
+
 const todoSlice = createSlice({
   name: 'todos',
   initialState: {
@@ -237,6 +258,10 @@ const todoSlice = createSlice({
       })
       .addCase(editFirebaseTodo.rejected, (state) => {
         console.log(state)
+      })
+      .addCase(fetchAllTodos.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.allTodos = action.payload;
       })
   },
 });
