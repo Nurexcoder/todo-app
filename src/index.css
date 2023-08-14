@@ -60,3 +60,26 @@ code {
   padding-bottom: 10px;
 
 }
+.bg-main {
+  background-color: #00A3FF;
+}
+
+.bg-secondaryno {
+  background-color: #E7E7E7;
+}
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  outline: none;
+}
