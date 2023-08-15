@@ -30,6 +30,12 @@ export const todoViewType = [
     {
         label: 'All',
         value: 102
+    },
+    {
+        label: 'Custom',
+        value: 103
     }
 ]
 export const priorityArray = [{ value: 0, label: 'General' }, { value: 1, label: "Low" }, { value: 2, label: "Medium" }, { value: 3, label: "High" }]
+
+export const daysInWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

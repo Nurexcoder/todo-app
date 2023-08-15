@@ -13,7 +13,7 @@ function App() {
       <Routes>
         <Route path='/home' element={<MainPage />} />
         <Route path='/add' element={<AddTodoPage />} />
-        <Route path='/login' element={<LoginPage />} />
+        <Route path='/login' element={<TryPremiumModal />} />
         <Route path='/' element={<LandingPage />} />
       </Routes>
 

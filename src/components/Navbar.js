@@ -15,6 +15,7 @@ const { Search } = Input;
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [user, setUser] = useState(null);
   const [openTodo, setOpenTodo] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -44,6 +45,10 @@ const Navbar = () => {
     dispatch(fetchUserTodos())
     dispatch(fetchAllTodos())
   }, [user])
+  const handleLogout = () => {
+    dispatch(handleSignOut())
+    navigate('/')
+  }
   return (
     <div className='flex w-full shadow-md bg-white h-max top-0 sticky z-50'>
       <div className="max-w-[1440px] w-full flex mx-auto items-center  justify-between  h-max p-4 gap-x-3 ">
@@ -125,7 +130,7 @@ const Navbar = () => {
             </MenuItem>
             <Divider />
 
-            <MenuItem onClick={() => dispatch(handleSignOut())}>
+            <MenuItem onClick={() => handleLogout()}>
               <ListItemIcon>
                 <Logout fontSize="small" />
               </ListItemIcon>

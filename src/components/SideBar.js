@@ -5,10 +5,20 @@ import { Avatar, Tooltip } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import LogoutIcon from '@mui/icons-material/Logout';
 import { handleSignOut } from '../sclices/authSlice'
+import { useNavigate } from 'react-router-dom'
 
 const SideBar = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.reducer?.auth?.user)
+  const userTodos = useSelector(state => state.reducer.todos.allTodos)
+  const completedTaskes = userTodos?.filter((item) => item.done)
+
+  const pendingTaskes = userTodos?.filter((item) => !item.done)
+  const navigate = useNavigate()
+  const handleLogout = () => {
+    dispatch(handleSignOut())
+    navigate('/')
+  }
   // md:col-span-5 lg:col-span-4  xl:col-span-3
   return (
     <div className=' hidden md:flex flex-col items-center    bg-primary rounded-3xl px-3 py-4 gap-y-4 sticky top-0'>
@@ -19,15 +29,15 @@ const SideBar = () => {
             {user?.displayName}
           </h3>
           <h4 className="text-sm font-semibold leading-tight">
-            Pending Tasks : 6
+            Pending Tasks : {pendingTaskes?.length}
           </h4>
           <h4 className="text-sm font-semibold leading-tight">
-            Completed Tasks : 6
+            Completed Tasks : {completedTaskes?.length}
           </h4>
         </div>
         <Tooltip title="Logout">
 
-          <div className="ml-auto" onClick={() => dispatch(handleSignOut())}>
+          <div className="ml-auto" onClick={handleLogout}>
             <LogoutIcon />
 
           </div>

@@ -15,6 +15,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import DesignedTodoItems from './customComponents/DesignedTodoItems'
 import { Backdrop, CircularProgress } from '@mui/material'
 import DesignedCompletedTodoItems from './customComponents/DesignedCompletedTodoItems'
+import DisplayDate from './customComponents/DisplayDate'
 
 const TodoView = () => {
     const [currentTodo, setCurrentTodo] = useState({
@@ -23,7 +24,7 @@ const TodoView = () => {
         priority: 0,
         dueDate: '',
     })
-    const [activeKey, setActiveKey] = useState(null)
+    const [viewValue, setviewValue] = useState(100)
 
     const dispatch = useDispatch()
     const state = useSelector(state => state.reducer.todos.status)
@@ -31,8 +32,8 @@ const TodoView = () => {
     const auth = useSelector(state => state.reducer.auth)
 
     const userTodos = useSelector(state => state.reducer.todos.userTodos)
+
     useEffect(() => {
-        console.log("hi")
         if (auth?.user) {
 
             dispatch(fetchUserTodos({ userId: auth.user.uid }))
@@ -46,99 +47,13 @@ const TodoView = () => {
     const completedTaskes = userTodos?.filter((item) => item.done)
 
     const pendingTaskes = userTodos?.filter((item) => !item.done)
+    
+    const requiredDate = useSelector(state => state.reducer.todos.requiredDate)
 
     //filter the not completed task by priority
 
-    const handleEdit = (id) => {
-
-        let editableTodo = { ...todos.find((item) => item.id === id) }
-        if (editableTodo.dueDate)
-            editableTodo.dueDate = dayjs('2023 ' + editableTodo.dueDate)
-        setActiveKey('1')
-        setCurrentTodo(editableTodo)
 
 
-    }
-    const clearCurTodo = () => {
-        setCurrentTodo({
-            title: '',
-            description: '',
-            priority: 0,
-            dueDate: '',
-        });
-        setActiveKey()
-    }
-
-    const handleItemDelete = (id) => {
-        dispatch(deleteTodo(id))
-        if (id === currentTodo?.id) {
-            clearCurTodo()
-        }
-
-    }
-
-
-
-    const handleChange = (e) => {
-        setCurrentTodo({
-            ...currentTodo,
-            [e.target.name]: e.target.value,
-        });
-    }
-
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-
-        if (currentTodo.title) {
-
-            const formatedDate = currentTodo.dueDate ? currentTodo.dueDate?.$D + ' ' + mS[currentTodo.dueDate.$M] : ''
-            const tempCurrentTodo = { ...currentTodo }
-            tempCurrentTodo.dueDate = formatedDate
-            if (currentTodo.id) {
-                dispatch(editTodo(tempCurrentTodo));
-            }
-            else {
-
-                dispatch(
-                    addTodo({
-                        id: Date.now(),
-                        title: currentTodo.title,
-                        description: currentTodo.description,
-                        priority: currentTodo.priority,
-                        dueDate: formatedDate,
-                        done: false,
-                    })
-                );
-            }
-            setCurrentTodo({
-                title: '',
-                description: '',
-                priority: 0,
-                dueDate: '',
-            });
-            setActiveKey()
-        }
-    };
-
-
-
-
-    const dropdownItems = (id) => (
-        <Menu >
-            <Menu.Item key="1">
-                <button className='flex items-center gap-x-2 px-2' onClick={() => handleEdit(id)}>
-                    <EditOutlined />  Edit Todo
-                </button>
-            </Menu.Item>
-            <Menu.Item key="2">
-                <button className='flex items-center gap-x-2 px-2' onClick={() => handleItemDelete(id)} >
-                    <DeleteOutlined />  Delete Todo
-                </button>
-            </Menu.Item>
-        </Menu>
-    )
 
 
 
@@ -157,7 +72,6 @@ const TodoView = () => {
 
     }]
     const handleSortChange = (value) => {
-        console.log(value)
         dispatch(
             toggleByOrder(value)
         )
@@ -166,37 +80,58 @@ const TodoView = () => {
         )
     }
     const handleViewChange = (value) => {
-        console.log(value)
+        setviewValue(value)
         dispatch(
             toggleRequireData(value)
         )
         dispatch(
+
             fetchUserTodos()
         )
+
     }
-    // console.log(userTodos)
-    // col-span-12 md:col-span-7 lg:col-span-8 xl:col-span-9
+
+    useEffect(() => {
+        if (typeof (requiredDate) === 'object') {
+            setviewValue(103)
+        }
+
+    }, [requiredDate])
+
+
+
     return (
         <div className='flex flex-col w-full md:w-full mx-auto col-span-2 md:col-span-1   shadow-sm gap-5 mb-10  h-full rounded-3xl bg-primary p-5' >
 
             <div className="flex lg:justify-between gap-y-5 lg:items-center flex-col lg:flex-row">
                 <div className="flex lg:items-center  gap-x-3 lg:justify-center flex-row">
-                    <div className="font-poppins font-bold text-base leading-tight">
-                        <h3>
-                            Friday 11
-                        </h3>
-                        <h3>
-                            Today&apos;s
-                        </h3>
-                    </div>
+
+                    <DisplayDate />
                     <h1 className="text-4xl font-bold font-poppins ">
                         TO-DO
                     </h1>
                 </div>
                 <div className=" flex gap-x-4 items-start lg:items-center">
-                    <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large" className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />} onChange={(value) => handleSortChange(value)} />
-                    <Select defaultValue={100} style={{ width: 120 }} options={todoViewType} size="large" suffixIcon={<KeyboardArrowDownIcon />} onChange={(value) => handleViewChange(value)} />
+                    <div className="flex gap-x-2 items-center">
+                        <span className=' text-base font-semibold'>
 
+                            Sort By :
+                        </span>
+
+                        <Select defaultValue={0} style={{ width: 120 }} options={sortArray} size="large" className='font-poppins' suffixIcon={<KeyboardArrowDownIcon />} onChange={(value) => handleSortChange(value)} />
+                    </div>
+                    <div className="flex gap-x-2 items-center">
+                        <span className=' text-base font-semibold'>
+
+                            View  :
+                        </span>
+
+                        <Select defaultValue={100}
+                            style={{ width: 120 }} options={todoViewType} size="large"
+                            suffixIcon={<KeyboardArrowDownIcon />}
+                            value={viewValue}
+                            onChange={(value) => handleViewChange(value)} />
+                    </div>
                 </div>
             </div>
 
