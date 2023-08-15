@@ -111,7 +111,7 @@ const TodoView = () => {
                         TO-DO
                     </h1>
                 </div>
-                <div className=" flex gap-x-4 items-start lg:items-center">
+                <div className=" flex gap-x-4 items-start lg:items-center sm:flex-col">
                     <div className="flex gap-x-2 items-center">
                         <span className=' text-base font-semibold'>
 
